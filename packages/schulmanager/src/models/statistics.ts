@@ -1,10 +1,10 @@
 export interface StatisticBySubject {
-  subject: Subject;
+  subject: StatisticSubject;
   absentLessons: number;
   totalLessons: number;
 }
 
-export interface Subject {
+export interface StatisticSubject {
   name: string;
   abbreviation: string;
   id: number;

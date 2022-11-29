@@ -1,6 +1,6 @@
 export interface ALesson {
   room: Room;
-  subject: Subject;
+  subject: LessonSubject;
   teachers: Teacher[];
   classes: Room[];
   studentGroups: StudentGroup[];
@@ -22,7 +22,7 @@ export interface StudentGroup {
   classId: number | null;
 }
 
-export interface Subject {
+export interface LessonSubject {
   id: number;
   abbreviation: string;
   name: string;
@@ -41,7 +41,7 @@ export interface ClassHour {
   number: string;
 }
 
-export interface Event {
+export interface LessonEvent {
   text: string;
   teachers: Teacher[];
   classes: Room[];
@@ -57,7 +57,7 @@ export interface Lesson {
   originalLessons?: ALesson[];
   isCancelled?: boolean;
   isSubstitution?: boolean;
-  event?: Event;
+  event?: LessonEvent;
   isNew?: boolean;
 }
 

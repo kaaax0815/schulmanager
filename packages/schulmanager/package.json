@@ -1,18 +1,18 @@
 {
   "name": "schulmanager",
   "version": "1.0.0",
-  "description": "Libary to interact with schulmanager-online.de",
+  "description": "Library to interact with schulmanager-online.de",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "build:docs": "typedoc",
     "lint": "eslint .",
     "lint:fix": "yarn lint --fix"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
     "ts-node": "^10.9.1",
+    "typedoc": "^0.23.21",
     "typescript": "^4.9.3"
   },
   "dependencies": {
@@ -24,5 +24,13 @@
     "LICENSE",
     "README.md",
     "dist/"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaaax0815/schulmanager.git",
+    "directory": "packages/schulmanager"
+  },
+  "bugs": {
+    "url": "https://github.com/kaaax0815/schulmanager/issues"
+  }
 }

@@ -1,3 +1,3 @@
 # Schulmanager
 
-## Libary to interact with schulmanager-online.de
+## Library to interact with schulmanager-online.de

@@ -130,7 +130,7 @@ export interface Detention {
   defaultDurationInMinutes: number;
 }
 
-export interface Login {
+export interface SecurityRules {
   loginTimeoutAdministrators: number;
   loginTimeoutTeachers: number;
   loginTimeoutStudents: number;
@@ -165,5 +165,5 @@ export interface Settings {
   letters: Letters;
   exemptions: Exemptions;
   detention: Detention;
-  '': Login;
+  '': SecurityRules;
 }

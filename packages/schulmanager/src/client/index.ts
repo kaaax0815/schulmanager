@@ -1,3 +1,6 @@
+import { EventsRequest } from '../models/events';
+import { ExamRequest } from '../models/exam';
+import { LessonRequest } from '../models/lessons';
 import {
   getCurrentTerm as oldGetCurrentTerm,
   getEvents as oldGetEvents,
@@ -9,12 +12,13 @@ import {
   getNewNotificationsCount as oldGetNewNotificationsCount,
   getSettings as oldGetSettings,
   getSubscriptions as oldGetSubscriptions
-} from '../index';
-import { EventsRequest } from '../models/events';
-import { ExamRequest } from '../models/exam';
-import { LessonRequest } from '../models/lessons';
+} from '../schulmanager';
 
-export class Schulmanager {
+/**
+ * Manages JWT Token for you
+ * @class
+ */
+export default class Schulmanager {
   token: string;
   /**
    * Creates a new Schulmanager instance
