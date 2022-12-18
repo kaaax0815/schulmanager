@@ -7,7 +7,6 @@
     "build": "tsc",
     "build:docs": "typedoc",
     "lint": "eslint .",
-    "lint:fix": "yarn lint --fix"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
