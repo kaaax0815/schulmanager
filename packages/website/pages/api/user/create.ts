@@ -1,4 +1,3 @@
-import argon2 from 'argon2';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import prisma from '../../../lib/prisma';
@@ -14,20 +13,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
   const userExists = await prisma.user.findUnique({
     where: {
-      name: body.data.name
+      sub: body.data.sub
     }
   });
   if (userExists !== null) {
-    res.status(409).send({ status: 'error', message: 'User already exists' });
+    res.status(409).send({ status: 'error', message: 'Entry for that user already exists' });
     return;
   }
-  // TODO: validate jwt and password (length, complexity, etc.)
-  const hash = await argon2.hash(body.data.password);
   const createdUser = await prisma.user.create({
     data: {
       jwt: body.data.jwt,
-      name: body.data.name,
-      hash: hash
+      sub: body.data.sub
     }
   });
   return res.status(200).send({ status: 'success', data: { id: createdUser.id } });

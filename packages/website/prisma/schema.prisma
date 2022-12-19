@@ -9,7 +9,6 @@ datasource db {
 
 model User {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
-  hash String
-  jwt  String
-  name String @unique
+  jwt String
+  sub  String @unique
 }

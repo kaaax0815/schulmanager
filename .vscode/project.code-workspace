@@ -27,6 +27,11 @@
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
     "editor.linkedEditing": true,
+    "cSpell.words": [
+      "kaaaxcreators",
+      "mantine",
+      "nextjs"
+    ],
   },
   "extensions": {
     "recommendations": ["aaron-bond.better-comments", "streetsidesoftware.code-spell-checker", "irongeek.vscode-env", "dbaeumer.vscode-eslint", "streetsidesoftware.code-spell-checker-german", "visualstudioexptteam.vscodeintellicode", "prisma.prisma"]
