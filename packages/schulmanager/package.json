@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "typedoc",
-    "lint": "eslint .",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
