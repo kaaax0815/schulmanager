@@ -4,9 +4,7 @@ import { useColorScheme } from '@mantine/hooks';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
-import Layout from './layout';
-
-export default function App(appProps: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   const preferredColorScheme = useColorScheme('dark');
   return (
     <>
@@ -23,7 +21,7 @@ export default function App(appProps: AppProps) {
             colorScheme: preferredColorScheme
           }}
         >
-          <Layout {...appProps}></Layout>
+          <Component {...pageProps} />
         </MantineProvider>
       </UserProvider>
     </>

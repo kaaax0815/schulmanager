@@ -26,15 +26,16 @@
     },
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
-    "editor.linkedEditing": true,
+    "editor.linkedEditing": false,
     "cSpell.words": [
       "kaaaxcreators",
       "mantine",
       "nextjs",
       "prisma"
     ],
+    "typescript.tsdk": "🌱 Root\\node_modules\\typescript\\lib",
   },
   "extensions": {
-    "recommendations": ["aaron-bond.better-comments", "streetsidesoftware.code-spell-checker", "irongeek.vscode-env", "dbaeumer.vscode-eslint", "streetsidesoftware.code-spell-checker-german", "visualstudioexptteam.vscodeintellicode", "prisma.prisma"]
+    "recommendations": ["aaron-bond.better-comments", "streetsidesoftware.code-spell-checker", "irongeek.vscode-env", "dbaeumer.vscode-eslint", "streetsidesoftware.code-spell-checker-german", "visualstudioexptteam.vscodeintellicode", "prisma.prisma", "formulahendry.auto-rename-tag"]
   }
 }

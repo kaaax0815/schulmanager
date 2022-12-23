@@ -2,29 +2,32 @@ import { withApiAuthRequired } from '@auth0/nextjs-auth0';
 import { NextApiHandler } from 'next';
 
 import prisma from '../../../lib/prisma';
-import { CreateResponse, CreateSchema } from '../../../schema/create';
+import { UpdateResponse, UpdateSchema } from '../../../schema/update';
 
 export default withApiAuthRequired(async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send({ status: 'error', message: 'Method not allowed' });
   }
-  const body = await CreateSchema.safeParseAsync(req.body);
+  const body = await UpdateSchema.safeParseAsync(req.body);
   if (body.success === false) {
     return res.status(400).send({ status: 'error', message: JSON.parse(body.error.message) });
   }
-  const userExists = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       sub: body.data.sub
     }
   });
-  if (userExists !== null) {
-    return res.status(409).send({ status: 'error', message: 'Entry for that user already exists' });
+  if (user === null) {
+    return res.status(404).send({ status: 'error', message: 'User not found' });
   }
-  const createdUser = await prisma.user.create({
+  // TODO: validate jwt
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: user.id
+    },
     data: {
-      jwt: body.data.jwt,
-      sub: body.data.sub
+      jwt: body.data.jwt
     }
   });
-  return res.status(200).send({ status: 'success', data: { id: createdUser.id } });
-} as NextApiHandler<CreateResponse>);
+  return res.status(200).send({ status: 'success', data: { id: updatedUser.id } });
+} as NextApiHandler<UpdateResponse>);

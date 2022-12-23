@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-export const CreateSchema = z.object({
+export const UpdateSchema = z.object({
   sub: z.string(),
   jwt: z.string()
 });
 
-export type CreateSchema = z.infer<typeof CreateSchema>;
+export type UpdateSchema = z.infer<typeof UpdateSchema>;
 
-export type CreateResponse =
+export type UpdateResponse =
   | {
       status: 'success';
       data: {

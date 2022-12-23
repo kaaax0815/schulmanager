@@ -10,10 +10,7 @@ const useStyles = createStyles((theme) => ({
   header: {
     paddingTop: theme.spacing.sm,
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    borderBottom: `1px solid ${
-      theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
-    }`,
-    marginBottom: 120
+    borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]}`
   },
 
   mainSection: {
@@ -26,10 +23,18 @@ const useStyles = createStyles((theme) => ({
     }
   },
 
+  container: {
+    padding: 0
+  },
+
   tabs: {
     [theme.fn.smallerThan('sm')]: {
       display: 'none'
     }
+  },
+
+  tabsOpen: {
+    display: 'block !important'
   },
 
   tabsList: {
@@ -58,8 +63,8 @@ interface Header {
 }
 
 export default function Header({ tabs }: Header) {
-  const { classes } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
+  const { classes, cx } = useStyles();
   const router = useRouter();
 
   const items = tabs.map((tab) => (
@@ -69,28 +74,35 @@ export default function Header({ tabs }: Header) {
   ));
 
   return (
-    <nav>
-      <div className={classes.header}>
-        <Container className={classes.mainSection}>
-          <Group position="apart">
-            <Image src={'/images/logo.png'} alt="Logo" width={40} height={40} />
-            <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+    <nav className={classes.header}>
+      <Container className={classes.mainSection}>
+        <Group position="apart">
+          <Image
+            src={'/images/logo.png'}
+            alt="Logo"
+            width={40}
+            height={40}
+            onClick={() => router.push('/')}
+          />
+          <Group position="right">
             <Account />
+            <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           </Group>
-        </Container>
-        <Container>
-          <Tabs
-            variant="outline"
-            classNames={{
-              root: classes.tabs,
-              tabsList: classes.tabsList,
-              tab: classes.tab
-            }}
-          >
-            <Tabs.List grow>{items}</Tabs.List>
-          </Tabs>
-        </Container>
-      </div>
+        </Group>
+      </Container>
+      <Container className={classes.container}>
+        <Tabs
+          variant="outline"
+          classNames={{
+            root: cx(classes.tabs, { [classes.tabsOpen]: opened }),
+            tabsList: classes.tabsList,
+            tab: classes.tab
+          }}
+          value={tabs.find((tab) => tab.url === router.pathname)?.name}
+        >
+          <Tabs.List grow>{items}</Tabs.List>
+        </Tabs>
+      </Container>
     </nav>
   );
 }
