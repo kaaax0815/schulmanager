@@ -6,6 +6,7 @@ import { Institution } from './models/institution';
 import { Lesson, LessonRequest } from './models/lessons';
 import { Letter } from './models/letters';
 import { Login } from './models/login';
+import { LoginStatus } from './models/loginStatus';
 import { Settings } from './models/settings';
 import { StatisticBySubject, StatisticByTime, StatisticsRequest } from './models/statistics';
 import { Subscription } from './models/subscriptions';
@@ -101,8 +102,17 @@ export interface Response<T> {
   data: T;
 }
 
-export type LoginStatusResponseBody = Login;
-export type LoginStatusResponseResult = Login['user'];
+export interface LoginResponse<T> {
+  /** New Token thats valid for 1d */
+  token: string;
+  data: T;
+}
+
+export type LoginStatusResponseBody = LoginStatus;
+export type LoginStatusResponseResult = LoginStatus['user'];
+
+export type LoginResponseBody = Login;
+export type LoginResponseResult = Login['user'];
 
 export type StatisticsResult<T extends 'time' | 'subject'> = T extends 'time'
   ? StatisticByTime
@@ -112,7 +122,7 @@ export type StatisticsResult<T extends 'time' | 'subject'> = T extends 'time'
  * Wrapper around axios
  */
 export interface MakeRawRequest<T> {
-  endpoint: '/calls' | '/login-status';
+  endpoint: '/calls' | '/login-status' | '/login';
   body: unknown;
   options: AxiosRequestConfig<unknown>;
   responseValidator: (response: AxiosResponse<T>['data']) => void;

@@ -1,4 +1,4 @@
-export interface LoginAssociatedStudent {
+export interface AssociatedStudent {
   id: number;
   firstname: string;
   lastname: string;
@@ -8,7 +8,7 @@ export interface LoginAssociatedStudent {
   isFullAged: unknown;
 }
 
-export interface LoginUser {
+export interface User {
   email: string;
   username: unknown;
   localUsername: unknown;
@@ -19,11 +19,11 @@ export interface LoginUser {
   firstname: string;
   lastname: string;
   associatedTeachers: unknown[];
-  associatedStudent: LoginAssociatedStudent;
+  associatedStudent: AssociatedStudent;
   associatedParents: unknown[];
 }
 
-export interface Login {
-  user: string;
-  jwt: string;
+export interface LoginStatus {
+  isAuthenticated: boolean;
+  user: User;
 }

@@ -1,6 +1,7 @@
 import {
   getLoginStatus as _getLoginStatus,
   getStatistics as _getStatistics,
+  login as _login,
   makeRequest
 } from './api';
 import { EventsRequest } from './models/events';
@@ -101,4 +102,13 @@ export async function getStatistics<T extends 'time' | 'subject'>(
   params: StatisticsRequest<T>
 ) {
   return _getStatistics(token, params);
+}
+
+/**
+ * Login to Schulmanager
+ * @param email Email
+ * @param password Password
+ */
+export async function login(email: string, password: string) {
+  return _login(email, password);
 }

@@ -4,6 +4,9 @@ import { InvalidResponse, InvalidStatusCode, MissingNewToken, NotAuthenticated }
 import { StatisticBySubject, StatisticByTime, StatisticsRequest } from './models/statistics';
 import {
   Endpoints,
+  LoginResponse,
+  LoginResponseBody,
+  LoginResponseResult,
   LoginStatusResponseBody,
   LoginStatusResponseResult,
   MakeRawRequest,
@@ -35,6 +38,26 @@ export async function getLoginStatus(token: string): Promise<Response<LoginStatu
   });
   return {
     newToken,
+    data: data.user
+  };
+}
+
+export async function login(
+  email: string,
+  password: string
+): Promise<LoginResponse<LoginResponseResult>> {
+  const { data } = await makeLoginRequest<LoginResponseBody>({
+    endpoint: '/login',
+    body: {
+      emailOrUsername: email,
+      password: password,
+      mobileApp: false,
+      institutionId: null
+    },
+    options: buildOptions(null)
+  });
+  return {
+    token: data.jwt,
     data: data.user
   };
 }
@@ -91,6 +114,17 @@ export async function makeRawRequest<T>({
   };
 }
 
+export async function makeLoginRequest<T>({
+  endpoint,
+  body,
+  options
+}: Omit<MakeRawRequest<T>, 'responseValidator'>) {
+  const response = await axios.post<T>(`${BASE_URL}${endpoint}`, body, options);
+  return {
+    data: response.data
+  };
+}
+
 /**
  * Checks if the response is valid
  * @param res Response Body
@@ -143,14 +177,23 @@ export function buildBody<T extends Modules, K extends Endpoints[T]>(
   };
 }
 
-export function buildOptions(token: string) {
-  return {
+export function buildOptions(token: string | null) {
+  const options = {
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
-      Authorization: `Bearer ${token}`,
       'Accept-Encoding': 'none',
       'User-Agent': 'kaaax0815/schulmanager 1.0'
     },
     responseType: 'json'
   } as const;
+  if (token !== null) {
+    const tokenOptions = {
+      headers: {
+        ...options.headers,
+        Authorization: `Bearer ${token}`
+      }
+    } as const;
+    return tokenOptions;
+  }
+  return options;
 }
