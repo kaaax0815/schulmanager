@@ -1,5 +1,6 @@
 import { withApiAuthRequired } from '@auth0/nextjs-auth0';
 import { NextApiHandler } from 'next';
+import { getLoginStatus } from 'schulmanager';
 
 import prisma from '../../../lib/prisma';
 import { UpdateResponse, UpdateSchema } from '../../../schema/update';
@@ -20,7 +21,13 @@ export default withApiAuthRequired(async function handler(req, res) {
   if (user === null) {
     return res.status(404).send({ status: 'error', message: 'User not found' });
   }
-  // TODO: validate jwt
+  const loginStatus = await getLoginStatus(body.data.jwt)
+    .then(() => true)
+    .catch(() => false);
+  if (loginStatus === false) {
+    return res.status(401).send({ status: 'error', message: 'Invalid JWT' });
+  }
+  console.log({ id: user.id, jwt: body.data.jwt });
   const updatedUser = await prisma.user.update({
     where: {
       id: user.id

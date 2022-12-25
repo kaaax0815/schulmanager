@@ -8,7 +8,7 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-export default function Login() {
+export default function Logout() {
   const { classes } = useStyles();
   return (
     <>
