@@ -23,7 +23,7 @@ export type Modules = keyof Endpoints;
 export interface Endpoints {
   exams: 'get-exams';
   null: 'get-settings' | 'get-institution' | 'get-current-term' | 'get-new-notifications-count';
-  calender: 'get-events-for-user';
+  calendar: 'get-events-for-user';
   schedules: 'get-actual-lessons';
   letters: 'get-letters';
   messenger: 'get-subscriptions';

@@ -40,7 +40,7 @@ export async function getExams(token: string, params: ExamRequest) {
  * @param params Parameters
  */
 export async function getEvents(token: string, params: EventsRequest) {
-  return makeRequest(token, 'calender', 'get-events-for-user', params);
+  return makeRequest(token, 'calendar', 'get-events-for-user', params);
 }
 
 /**
