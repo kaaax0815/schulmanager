@@ -27,7 +27,6 @@ export default function Account({ token }: InferGetServerSidePropsType<typeof ge
 
   const setTokenAndSave = (token: string) => {
     setJwtToken(token);
-    saveToken();
   };
 
   const saveToken = async () => {
@@ -55,13 +54,15 @@ export default function Account({ token }: InferGetServerSidePropsType<typeof ge
       return;
     }
     token = jwtToken;
-    setStatus({ status: FormStatusActionKind.success, message: 'Token saved' });
+    setStatus({ status: FormStatusActionKind.success, message: 'Token saved! Press "Save"' });
+    // TODO: router refresh
     setTimeout(() => setStatus(formStatusInitialState), 2000);
   };
 
   // TODO: hide token input if token is set (automatic token update)
   // TODO: show status for token update
   // TODO: force to create db entry
+  // TODO: handle error url parameter
 
   return (
     <Layout>

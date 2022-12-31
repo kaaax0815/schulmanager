@@ -27,7 +27,6 @@ export default withApiAuthRequired(async function handler(req, res) {
   if (loginStatus === false) {
     return res.status(401).send({ status: 'error', message: 'Invalid JWT' });
   }
-  console.log({ id: user.id, jwt: body.data.jwt });
   const updatedUser = await prisma.user.update({
     where: {
       id: user.id
