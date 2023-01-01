@@ -1,24 +1,21 @@
 import { getSession } from '@auth0/nextjs-auth0';
-import { Anchor, Button, Card, createStyles, Group, Text } from '@mantine/core';
+import { Anchor, Button, Card, Group, Table, Text } from '@mantine/core';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Fragment } from 'react';
-import { getEvents, getExams, getLetters, getLoginStatus, models } from 'schulmanager';
+import {
+  getEvents,
+  getExams,
+  getLetters,
+  getLoginStatus,
+  InvalidStatusCode,
+  models
+} from 'schulmanager';
 
 import Layout from '../components/layout';
 import prisma from '../lib/prisma';
 import { dateInMonth, formatApiToHuman, formatDateToAPI } from '../utils/date';
 
-const useStyles = createStyles(() => ({
-  table: {
-    width: '100%',
-    th: {
-      textAlign: 'left'
-    }
-  }
-}));
-
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { classes } = useStyles();
   return (
     <Layout>
       {props.unreadLetters.map((letter) => (
@@ -79,7 +76,7 @@ export default function Overview(props: InferGetServerSidePropsType<typeof getSe
           <Text weight={500}>Klausuren</Text>
         </Card.Section>
         <Card.Section inheritPadding py="xs">
-          <table className={classes.table}>
+          <Table>
             <thead>
               <tr>
                 <th>Fach</th>
@@ -98,7 +95,7 @@ export default function Overview(props: InferGetServerSidePropsType<typeof getSe
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
         </Card.Section>
       </Card>
     </Layout>
@@ -134,16 +131,15 @@ export const getServerSideProps: GetServerSideProps<{
   }
   const token = entry.jwt;
   try {
-    // TODO: optimize sorting, grouping, etc.
     const letters = await getLetters(token);
-    const unreadLetters = letters.data
-      .filter((letter) => letter.studentStatuses[0].readTimestamp === null)
-      .sort((a, b) => {
-        // oldest first
-        const aDate = new Date(a.createdAt);
-        const bDate = new Date(b.createdAt);
-        return aDate.getTime() - bDate.getTime();
-      });
+
+    const collator = new Intl.Collator();
+
+    const unreadLetters = letters.data.filter(
+      (letter) => letter.studentStatuses[0].readTimestamp === null
+    );
+
+    const sortedLetters = unreadLetters.sort((a, b) => collator.compare(a.createdAt, b.createdAt));
 
     const upcomingEvents = await getEvents(token, {
       start: formatDateToAPI(new Date()),
@@ -154,22 +150,25 @@ export const getServerSideProps: GetServerSideProps<{
     const allUpcomingEvents = [
       ...upcomingEvents.data.nonRecurringEvents,
       ...upcomingEvents.data.recurringEvents
-    ].sort((a, b) => {
-      // closest first
-      const aDate = new Date(a.start);
-      const bDate = new Date(b.start);
-      return aDate.getTime() - bDate.getTime();
-    });
+    ];
 
-    const groupedEvents = allUpcomingEvents.reduce((prev, curr) => {
-      prev[curr.start] = [...(prev[curr.start] || []), curr];
-      return prev;
-    }, {} as { [start: string]: models.Event[] });
+    const sortedEvents = allUpcomingEvents.sort((a, b) => collator.compare(a.start, b.start));
 
-    const groupedByArrayEvents = Object.keys(groupedEvents).map((key) => ({
-      start: key,
-      events: groupedEvents[key]
-    }));
+    const groupedEvents = sortedEvents.reduce(
+      (prev, curr) => {
+        const i = prev.findIndex((v) => v.start == curr.start);
+        if (i == -1) {
+          prev.push({ start: curr.start, events: [curr] });
+        } else {
+          prev[i].events.push(curr);
+        }
+        return prev;
+      },
+      [] as {
+        start: string;
+        events: models.Event[];
+      }[]
+    );
 
     const student = await getLoginStatus(token);
 
@@ -179,35 +178,26 @@ export const getServerSideProps: GetServerSideProps<{
       student: { id: student.data.associatedStudent.id }
     });
 
-    const sortedExams = upcomingExams.data.sort((a, b) => {
-      // closest first
-      const aDate = new Date(a.date);
-      const bDate = new Date(b.date);
-      return aDate.getTime() - bDate.getTime();
-    });
+    const sortedExams = upcomingExams.data.sort((a, b) => collator.compare(a.date, b.date));
 
-    const uniqueExams = sortedExams.filter((exam, index) => {
-      const nextExam = sortedExams[index + 1];
-      if (!nextExam) {
-        return true;
-      }
-      return exam.subject.id !== nextExam.subject.id;
-    });
+    const uniqueExams = [...new Map(sortedExams.map((item) => [item.subject.id, item])).values()];
 
     return {
       props: {
-        unreadLetters,
-        upcomingEvents: groupedByArrayEvents,
+        unreadLetters: sortedLetters,
+        upcomingEvents: groupedEvents,
         upcomingExams: uniqueExams
       }
     };
   } catch (e) {
-    console.log(e);
-    return {
-      redirect: {
-        destination: '/account?error=jwt',
-        permanent: false
-      }
-    };
+    if (e instanceof InvalidStatusCode) {
+      return {
+        redirect: {
+          destination: '/account?error=jwt',
+          permanent: false
+        }
+      };
+    }
+    throw e;
   }
 };
