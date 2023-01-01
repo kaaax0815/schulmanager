@@ -1,6 +1,5 @@
-import { getSession } from '@auth0/nextjs-auth0';
 import { Anchor, Button, Card, Group, Table, Text } from '@mantine/core';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { InferGetServerSidePropsType } from 'next';
 import { Fragment } from 'react';
 import {
   getEvents,
@@ -12,8 +11,8 @@ import {
 } from 'schulmanager';
 
 import Layout from '../components/layout';
-import prisma from '../lib/prisma';
 import { dateInMonth, formatApiToHuman, formatDateToAPI } from '../utils/date';
+import { withAuthAndDB } from '../utils/guard';
 
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
@@ -102,34 +101,11 @@ export default function Overview(props: InferGetServerSidePropsType<typeof getSe
   );
 }
 
-export const getServerSideProps: GetServerSideProps<{
+export const getServerSideProps = withAuthAndDB<{
   unreadLetters: models.Letter[];
   upcomingEvents: { start: string; events: models.Event[] }[];
   upcomingExams: models.Exam[];
-}> = async ({ req, res }) => {
-  const session = await getSession(req, res);
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/api/auth/login',
-        permanent: false
-      }
-    };
-  }
-  const entry = await prisma.user.findUnique({
-    where: {
-      sub: session.user.sub
-    }
-  });
-  if (!entry) {
-    return {
-      redirect: {
-        destination: '/account?error=notfound',
-        permanent: false
-      }
-    };
-  }
-  const token = entry.jwt;
+}>(async function getServerSideProps({ entry: { jwt: token } }) {
   try {
     const letters = await getLetters(token);
 
@@ -200,4 +176,4 @@ export const getServerSideProps: GetServerSideProps<{
     }
     throw e;
   }
-};
+});
