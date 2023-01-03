@@ -26,7 +26,7 @@ export interface Endpoints {
   calendar: 'get-events-for-user';
   schedules: 'get-actual-lessons';
   letters: 'get-letters';
-  messenger: 'get-subscriptions';
+  messenger: 'get-subscriptions' | 'count-new-messages';
   classbook: 'get-statistics';
 }
 
@@ -62,6 +62,7 @@ export interface ResponseResults {
   'get-subscriptions': Subscription[];
   /** Don't use this type directly */
   'get-statistics': never;
+  'count-new-messages': number;
 }
 
 /**

@@ -112,3 +112,11 @@ export async function getStatistics<T extends 'time' | 'subject'>(
 export async function login(email: string, password: string) {
   return _login(email, password);
 }
+
+/**
+ * Count new messages
+ * @param token Token
+ */
+export async function countNewMessages(token: string) {
+  return makeRequest(token, 'messenger', 'count-new-messages', undefined);
+}
