@@ -1,12 +1,13 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Avatar, createStyles, Group, Menu, Text, UnstyledButton } from '@mantine/core';
+import { IconLogout, IconSchool, IconUser } from '@tabler/icons';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
   user: {
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-    padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
+    padding: '4px',
     borderRadius: theme.radius.sm,
     transition: 'background-color 100ms ease',
 
@@ -66,17 +67,22 @@ export default function Account() {
       </Menu.Target>
       <Menu.Dropdown>
         <Menu.Label>Informationen</Menu.Label>
-        <Menu.Item>Schule</Menu.Item>
+        <Menu.Item icon={<IconSchool size={16} />}>Schule</Menu.Item>
 
         <Menu.Label>Einstellungen</Menu.Label>
         <Menu.Item
           onClick={() => router.push('/account')}
           className={classes.item}
           data-active={router.pathname === '/account'}
+          icon={<IconUser size={16} />}
         >
           Account
         </Menu.Item>
-        <Menu.Item onClick={() => router.push('/api/auth/logout')} className={classes.item}>
+        <Menu.Item
+          onClick={() => router.push('/api/auth/logout')}
+          className={classes.item}
+          icon={<IconLogout size={16} />}
+        >
           Abmelden
         </Menu.Item>
       </Menu.Dropdown>

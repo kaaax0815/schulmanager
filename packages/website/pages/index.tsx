@@ -1,4 +1,5 @@
 import { Anchor, Button, Card, Group, Table, Text } from '@mantine/core';
+import { IconCalendar, IconFilePencil, IconMail } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import { Fragment } from 'react';
 import {
@@ -11,16 +12,21 @@ import {
 } from 'schulmanager';
 
 import Layout from '../components/layout';
+import useIcons, { UseIconsProps } from '../hooks/useIcons';
 import { dateInTime, formatApiToHuman, formatDateToAPI } from '../utils/date';
 import { withAuthAndDB } from '../utils/guard';
 
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  useIcons(props.iconsData);
   return (
-    <Layout>
+    <Layout pb="md">
       {props.unreadLetters.map((letter) => (
         <Card shadow="sm" radius="md" mt="md" key={letter.id}>
           <Card.Section withBorder inheritPadding py="xs">
-            <Text weight={500}>Ungelesener Elternbrief</Text>
+            <Group>
+              <IconMail size={20} />
+              <Text weight={500}>Ungelesener Elternbrief</Text>
+            </Group>
           </Card.Section>
           <Card.Section inheritPadding pt="xs">
             <Text fw={700} size="lg">
@@ -43,7 +49,10 @@ export default function Overview(props: InferGetServerSidePropsType<typeof getSe
       ))}
       <Card shadow="sm" radius="md" mt="md">
         <Card.Section withBorder inheritPadding py="xs">
-          <Text weight={500}>Kommende Termine</Text>
+          <Group>
+            <IconCalendar size={20} />
+            <Text weight={500}>Kommende Termine</Text>
+          </Group>
         </Card.Section>
         {props.upcomingEvents.map((event) => (
           <Fragment key={event.start}>
@@ -70,9 +79,12 @@ export default function Overview(props: InferGetServerSidePropsType<typeof getSe
           Zum Kalender
         </Button>
       </Card>
-      <Card shadow="sm" radius="md" my="md">
+      <Card shadow="sm" radius="md" mt="md">
         <Card.Section withBorder inheritPadding py="xs">
-          <Text weight={500}>Klausuren</Text>
+          <Group>
+            <IconFilePencil size={20} />
+            <Text weight={500}>Klausuren</Text>
+          </Group>
         </Card.Section>
         <Card.Section inheritPadding py="xs">
           <Table>
@@ -105,7 +117,8 @@ export const getServerSideProps = withAuthAndDB<{
   unreadLetters: models.Letter[];
   upcomingEvents: { start: string; events: models.Event[] }[];
   upcomingExams: models.Exam[];
-}>(async function getServerSideProps({ entry: { jwt: token } }) {
+  iconsData: UseIconsProps;
+}>(async function getServerSideProps({ user: { jwt: token }, iconsData }) {
   try {
     const letters = await getLetters(token);
 
@@ -162,7 +175,8 @@ export const getServerSideProps = withAuthAndDB<{
       props: {
         unreadLetters: sortedLetters,
         upcomingEvents: groupedEvents,
-        upcomingExams: uniqueExams
+        upcomingExams: uniqueExams,
+        iconsData
       }
     };
   } catch (e) {

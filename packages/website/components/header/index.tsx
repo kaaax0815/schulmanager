@@ -1,10 +1,12 @@
-import { Burger, Container, createStyles, Group, Tabs } from '@mantine/core';
+import { Burger, Container, createStyles, Group, Tabs, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { TablerIcon } from '@tabler/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import Account from './account';
+import Icons from './icons';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -13,18 +15,10 @@ const useStyles = createStyles((theme) => ({
     borderBottom: `1px solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]}`
   },
 
-  mainSection: {
-    paddingBottom: theme.spacing.sm
-  },
-
   burger: {
     [theme.fn.largerThan('xs')]: {
       display: 'none'
     }
-  },
-
-  container: {
-    padding: 0
   },
 
   tabs: {
@@ -58,8 +52,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface Header {
-  tabs: { name: string; url: string }[];
-  defaultValue: string;
+  tabs: { name: string; url: string; icon: TablerIcon }[];
 }
 
 export default function Header({ tabs }: Header) {
@@ -69,13 +62,16 @@ export default function Header({ tabs }: Header) {
 
   const items = tabs.map((tab) => (
     <Tabs.Tab value={tab.name} key={tab.name} onClick={() => router.push(tab.url)}>
-      {tab.name}
+      <Group>
+        <tab.icon size={20} />
+        <Text>{tab.name}</Text>
+      </Group>
     </Tabs.Tab>
   ));
 
   return (
     <nav className={classes.header}>
-      <Container className={classes.mainSection}>
+      <Container pb="xs">
         <Group position="apart">
           <Image
             src={'/images/logo.png'}
@@ -85,12 +81,13 @@ export default function Header({ tabs }: Header) {
             onClick={() => router.push('/')}
           />
           <Group position="right">
+            <Icons />
             <Account />
             <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           </Group>
         </Group>
       </Container>
-      <Container className={classes.container}>
+      <Container p={0}>
         <Tabs
           variant="outline"
           classNames={{

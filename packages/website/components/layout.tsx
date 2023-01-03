@@ -1,25 +1,25 @@
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client';
-import { Container } from '@mantine/core';
+import { Container, ContainerProps } from '@mantine/core';
+import { IconClock, IconHome } from '@tabler/icons';
 
 import Header from './header';
 
-export type LayoutProps = {
+export interface LayoutProps extends Partial<ContainerProps> {
   children: React.ReactNode;
-};
+}
 
 // TODO: pull to refresh for container
-function Layout({ children }: LayoutProps) {
+function Layout({ children, ...rest }: LayoutProps) {
   return (
     <>
       <Header
         tabs={[
-          { name: 'Übersicht', url: '/' },
-          { name: 'Stundenplan', url: '/timetable' }
+          { name: 'Übersicht', url: '/', icon: IconHome },
+          { name: 'Stundenplan', url: '/timetable', icon: IconClock }
         ]}
-        defaultValue="Übersicht"
       />
       <main>
-        <Container>{children}</Container>
+        <Container {...rest}>{children}</Container>
       </main>
     </>
   );

@@ -1,4 +1,4 @@
-import { Card, Grid, Text } from '@mantine/core';
+import { Card, Center, Container, createStyles, Flex, Grid, Group, Text } from '@mantine/core';
 import { InferGetServerSidePropsType } from 'next';
 import { Fragment } from 'react';
 import {
@@ -10,6 +10,8 @@ import {
 } from 'schulmanager';
 
 import Layout from '../components/layout';
+import Substitution from '../components/timetable/substitution';
+import useIcons, { UseIconsProps } from '../hooks/useIcons';
 import {
   dateInTime,
   formatApiToHuman,
@@ -19,25 +21,67 @@ import {
 } from '../utils/date';
 import { withAuthAndDB } from '../utils/guard';
 
+const useStyles = createStyles((theme) => ({
+  border: {
+    borderTop: `1px solid`,
+    borderTopColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
+  },
+  root: {
+    '> div': {
+      borderRight: `1px solid`,
+      borderRightColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3],
+      '&:nth-child(6n)': {
+        borderRight: 'none'
+      }
+    }
+  }
+}));
+
+// TODO: comment support
+// TODO: switching between weeks
+
 export default function Timetable(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { classes } = useStyles();
+  useIcons(props.iconsData);
   return (
-    <Layout>
-      <Card shadow="sm" radius="md" mt="md">
-        <Grid columns={props.dates.length + 1}>
-          <Grid.Col span={1}>/</Grid.Col>
+    <Layout px="xs" pb="xs">
+      <Card shadow="sm" radius="md" mt="xs" p="xs">
+        <Grid columns={props.dates.length * 2 + 1} gutter={3} className={classes.root}>
+          <Grid.Col span={1} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            {' '}
+          </Grid.Col>
           {props.dates.map((date) => (
-            <Grid.Col span={1} key={date}>
-              <Text>{date}</Text>
+            <Grid.Col span={2} key={date.date} sx={{ textAlign: 'center' }}>
+              <Text fw={700} fz="xs">
+                {date.weekday}.
+              </Text>
+              <Text fz="xs">{date.date}</Text>
             </Grid.Col>
           ))}
           {props.timetable.map((lessons, classHour) => (
             <Fragment key={classHour}>
-              <Grid.Col span={1}>
-                <Text>{classHour + 1}</Text>
+              <Grid.Col span={1} className={classes.border}>
+                <Flex h="100%" w="100%" justify="center" align="center">
+                  <Text fz="xs">{classHour + 1}</Text>
+                </Flex>
               </Grid.Col>
               {lessons.map((lesson, day) => (
-                <Grid.Col span={1} key={classHour.toString() + day.toString()}>
-                  <Text>{!lesson.isFree && <Text>{lesson.actualLesson?.subjectLabel}</Text>}</Text>
+                <Grid.Col
+                  span={2}
+                  key={classHour.toString() + day.toString()}
+                  className={classes.border}
+                >
+                  {!lesson.isFree && lesson.actualLesson && (
+                    <Container p={5}>
+                      <Group position="apart" spacing={0}>
+                        <Substitution substitute="subject" lesson={lesson} />
+                        <Substitution substitute="teacher" lesson={lesson} />
+                      </Group>
+                      <Center>
+                        <Substitution substitute="room" lesson={lesson} />
+                      </Center>
+                    </Container>
+                  )}
                 </Grid.Col>
               ))}
             </Fragment>
@@ -56,8 +100,9 @@ interface FreeLesson {
 
 export const getServerSideProps = withAuthAndDB<{
   timetable: ((models.Lesson & { isFree: false }) | FreeLesson)[][];
-  dates: string[];
-}>(async function getServerSideProps({ entry: { jwt: token } }) {
+  dates: { weekday: string; date: string }[];
+  iconsData: UseIconsProps;
+}>(async function getServerSideProps({ user: { jwt: token }, iconsData }) {
   try {
     const loginStatus = await getLoginStatus(token);
 
@@ -106,7 +151,21 @@ export const getServerSideProps = withAuthAndDB<{
     return {
       props: {
         timetable,
-        dates: dates.map((date) => formatApiToHuman(date, { weekday: 'short', year: undefined }))
+        dates: dates.map((date) => ({
+          weekday: formatApiToHuman(date, {
+            weekday: 'short',
+            day: undefined,
+            month: undefined,
+            year: undefined
+          }),
+          date: formatApiToHuman(date, {
+            day: 'numeric',
+            month: 'numeric',
+            weekday: undefined,
+            year: undefined
+          })
+        })),
+        iconsData
       }
     };
   } catch (e) {

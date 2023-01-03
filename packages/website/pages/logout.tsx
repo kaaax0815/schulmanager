@@ -1,4 +1,5 @@
-import { Container, createStyles, Group } from '@mantine/core';
+import { Button, Container, createStyles, Group, Text } from '@mantine/core';
+import { IconLogin } from '@tabler/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -22,8 +23,11 @@ export default function Logout() {
       </nav>
       <main>
         <Container>
-          <h5>Erfolgreich ausgeloggt</h5>
-          <Link href="/">Wieder einloggen</Link>
+          <h1>Ausgeloggt</h1>
+          <Text mb="xl">Du wurdest erfolgreich ausgeloggt</Text>
+          <Link href="/">
+            <Button leftIcon={<IconLogin />}>Wieder einloggen</Button>
+          </Link>
         </Container>
       </main>
     </>

@@ -3,9 +3,14 @@ import { MantineProvider } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useState } from 'react';
+
+import IconsContext from '../contexts/icons';
 
 export default function App({ Component, pageProps }: AppProps) {
   const preferredColorScheme = useColorScheme('dark');
+  const [messageCount, setMessageCount] = useState(0);
+  const [notificationCount, setNotificationCount] = useState(0);
   return (
     <>
       <Head>
@@ -21,7 +26,11 @@ export default function App({ Component, pageProps }: AppProps) {
             colorScheme: preferredColorScheme
           }}
         >
-          <Component {...pageProps} />
+          <IconsContext.Provider
+            value={{ messageCount, notificationCount, setMessageCount, setNotificationCount }}
+          >
+            <Component {...pageProps} />
+          </IconsContext.Provider>
         </MantineProvider>
       </UserProvider>
     </>
