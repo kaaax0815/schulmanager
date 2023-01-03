@@ -5,6 +5,7 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useState } from 'react';
 
+import RouterTransition from '../components/routerTransition';
 import IconsContext from '../contexts/icons';
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -29,6 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <IconsContext.Provider
             value={{ messageCount, notificationCount, setMessageCount, setNotificationCount }}
           >
+            <RouterTransition />
             <Component {...pageProps} />
           </IconsContext.Provider>
         </MantineProvider>
