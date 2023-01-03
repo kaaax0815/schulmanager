@@ -11,7 +11,7 @@ import {
 } from 'schulmanager';
 
 import Layout from '../components/layout';
-import { dateInMonth, formatApiToHuman, formatDateToAPI } from '../utils/date';
+import { dateInTime, formatApiToHuman, formatDateToAPI } from '../utils/date';
 import { withAuthAndDB } from '../utils/guard';
 
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -120,7 +120,7 @@ export const getServerSideProps = withAuthAndDB<{
     const upcomingEvents = await getEvents(token, {
       start: formatDateToAPI(new Date()),
       includeHolidays: false,
-      end: formatDateToAPI(dateInMonth(3))
+      end: formatDateToAPI(dateInTime({ months: 3 }))
     });
 
     const allUpcomingEvents = [
@@ -150,7 +150,7 @@ export const getServerSideProps = withAuthAndDB<{
 
     const upcomingExams = await getExams(token, {
       start: formatDateToAPI(new Date()),
-      end: formatDateToAPI(dateInMonth(2)),
+      end: formatDateToAPI(dateInTime({ months: 2 })),
       student: { id: student.data.associatedStudent.id }
     });
 

@@ -14,7 +14,7 @@ function Layout({ children }: LayoutProps) {
       <Header
         tabs={[
           { name: 'Übersicht', url: '/' },
-          { name: 'Stundenplan', url: '/schedule' }
+          { name: 'Stundenplan', url: '/timetable' }
         ]}
         defaultValue="Übersicht"
       />
