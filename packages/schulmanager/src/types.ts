@@ -54,7 +54,7 @@ export interface ResponseResults {
   'get-settings': Settings;
   'get-exams': Exam[];
   'get-events-for-user': Events;
-  'get-actual-lessons': Lesson;
+  'get-actual-lessons': Lesson[];
   'get-institution': Institution;
   'get-current-term': Term;
   'get-new-notifications-count': number;
