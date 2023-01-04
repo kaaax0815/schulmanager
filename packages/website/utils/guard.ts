@@ -1,5 +1,5 @@
 import { getSession, Session } from '@auth0/nextjs-auth0';
-import { User } from '@prisma/client';
+import { Settings, User } from '@prisma/client';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { countNewMessages, getNewNotificationsCount, InvalidStatusCode } from 'schulmanager';
 
@@ -32,7 +32,9 @@ export function withAuth<T extends Props>(func: withAuthFunc<T>) {
 }
 
 export interface AuthAndDBProps extends AuthProps {
-  user: User;
+  user: User & {
+    settings: Settings;
+  };
   iconsData: UseIconsProps;
 }
 
@@ -53,6 +55,9 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
     const user = await prisma.user.findUnique({
       where: {
         sub: session.user.sub
+      },
+      include: {
+        settings: true
       }
     });
 
@@ -65,6 +70,19 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
       };
     }
 
+    const userAndSettings = user as User & {
+      settings: Settings;
+    };
+
+    if (!user.settings) {
+      const settings = await prisma.settings.create({
+        data: {
+          userId: user.id
+        }
+      });
+      userAndSettings.settings = settings;
+    }
+
     try {
       const unreadMessages = await countNewMessages(user.jwt);
       const newNotifications = await getNewNotificationsCount(user.jwt);
@@ -74,7 +92,7 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
         notificationCount: newNotifications.data
       };
 
-      return func({ ...ctx, session, user, iconsData });
+      return func({ ...ctx, session, user: userAndSettings, iconsData });
     } catch (e) {
       if (e instanceof InvalidStatusCode) {
         return {

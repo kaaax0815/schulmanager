@@ -24,5 +24,5 @@ export default function RouterTransition() {
     };
   }, [router.asPath, router.events]);
 
-  return <NavigationProgress autoReset={true} />;
+  return <NavigationProgress autoReset={true} progressLabel="Seite wird geladen" />;
 }

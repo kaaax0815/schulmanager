@@ -67,6 +67,7 @@ export default function Account({
 
   // TODO: hide token input if token is set (automatic token update)
   // TODO: show status for token update
+  // TODO: remind to press save after modal
 
   return (
     <Layout>
@@ -90,7 +91,10 @@ export default function Account({
       <h1>Account</h1>
       <Group>
         <Avatar src={user.picture} alt="Avatar" />
-        <Text>{user.name}</Text>
+        <Flex direction="column">
+          <Text>{user.name}</Text>
+          <Text>{user.email}</Text>
+        </Flex>
       </Group>
       <h2>Options</h2>
       <TextInput

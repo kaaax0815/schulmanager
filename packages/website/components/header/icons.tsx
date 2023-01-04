@@ -9,7 +9,10 @@ export default function Icons() {
   const iconsContext = useContext(IconsContext);
   return (
     <>
-      <Link href="https://login.schulmanager-online.de/#/dashboard">
+      <Link
+        href="https://login.schulmanager-online.de/#/modules/messenger/messages"
+        aria-label="Nachrichten"
+      >
         <Indicator
           label={iconsContext.messageCount}
           color="red"
@@ -19,12 +22,12 @@ export default function Icons() {
           overflowCount={9}
           size={16}
         >
-          <ActionIcon>
+          <ActionIcon title="Nachrichten">
             <IconMail size={20} />
           </ActionIcon>
         </Indicator>
       </Link>
-      <Link href="https://login.schulmanager-online.de/#/modules/messenger/messages">
+      <Link href="https://login.schulmanager-online.de/#/dashboard" aria-label="Benachrichtigungen">
         <Indicator
           label={iconsContext.notificationCount}
           color="red"
@@ -34,7 +37,7 @@ export default function Icons() {
           overflowCount={9}
           size={16}
         >
-          <ActionIcon>
+          <ActionIcon title="Benachrichtigungen">
             <IconBell size={20} />
           </ActionIcon>
         </Indicator>

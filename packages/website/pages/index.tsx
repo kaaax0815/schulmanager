@@ -1,7 +1,4 @@
-import { Anchor, Button, Card, Group, Table, Text } from '@mantine/core';
-import { IconCalendar, IconFilePencil, IconMail } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
-import { Fragment } from 'react';
 import {
   getEvents,
   getExams,
@@ -12,170 +9,118 @@ import {
 } from 'schulmanager';
 
 import Layout from '../components/layout';
+import Disabled from '../components/overview/disabled';
+import Events from '../components/overview/events';
+import Exams from '../components/overview/exams';
+import Letters from '../components/overview/letters';
 import useIcons, { UseIconsProps } from '../hooks/useIcons';
-import { dateInTime, formatApiToHuman, formatDateToAPI } from '../utils/date';
+import { dateInTime, formatDateToAPI } from '../utils/date';
 import { withAuthAndDB } from '../utils/guard';
 
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useIcons(props.iconsData);
   return (
     <Layout pb="md">
-      {props.unreadLetters.map((letter) => (
-        <Card shadow="sm" radius="md" mt="md" key={letter.id}>
-          <Card.Section withBorder inheritPadding py="xs">
-            <Group>
-              <IconMail size={20} />
-              <Text weight={500}>Ungelesener Elternbrief</Text>
-            </Group>
-          </Card.Section>
-          <Card.Section inheritPadding pt="xs">
-            <Text fw={700} size="lg">
-              {letter.title}
-            </Text>
-          </Card.Section>
-          <Card.Section inheritPadding py="xs">
-            <Group>
-              <Text>{formatApiToHuman(letter.createdAt, { weekday: undefined })}</Text>
-              <Button
-                component="a"
-                href={`https://login.schulmanager-online.de/#/modules/letters/view/view/${letter.id}`}
-                compact
-              >
-                Lesen
-              </Button>
-            </Group>
-          </Card.Section>
-        </Card>
-      ))}
-      <Card shadow="sm" radius="md" mt="md">
-        <Card.Section withBorder inheritPadding py="xs">
-          <Group>
-            <IconCalendar size={20} />
-            <Text weight={500}>Kommende Termine</Text>
-          </Group>
-        </Card.Section>
-        {props.upcomingEvents.map((event) => (
-          <Fragment key={event.start}>
-            <Card.Section inheritPadding py="xs">
-              <Text fw={700}>{formatApiToHuman(event.start)}</Text>
-            </Card.Section>
-            <Card.Section inheritPadding>
-              {event.events.map((event) => (
-                <Anchor
-                  key={event.id}
-                  href={`https://login.schulmanager-online.de/#/modules/calendar/overview/view-event/${event.id}`}
-                >
-                  {event.summary}
-                </Anchor>
-              ))}
-            </Card.Section>
-          </Fragment>
-        ))}
-        <Button
-          component="a"
-          href="https://login.schulmanager-online.de/#/modules/calendar/overview/"
-          mt="xs"
-        >
-          Zum Kalender
-        </Button>
-      </Card>
-      <Card shadow="sm" radius="md" mt="md">
-        <Card.Section withBorder inheritPadding py="xs">
-          <Group>
-            <IconFilePencil size={20} />
-            <Text weight={500}>Klausuren</Text>
-          </Group>
-        </Card.Section>
-        <Card.Section inheritPadding py="xs">
-          <Table>
-            <thead>
-              <tr>
-                <th>Fach</th>
-                <th>Datum</th>
-                <th>Stunde</th>
-              </tr>
-            </thead>
-            <tbody>
-              {props.upcomingExams.map((exam) => (
-                <tr key={exam.id}>
-                  <td>{exam.subject.name}</td>
-                  <td>{formatApiToHuman(exam.date, { weekday: 'short' })}</td>
-                  <td>
-                    {exam.startClassHour.number} - {exam.endClassHour.number}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Section>
-      </Card>
+      <Letters unreadLetters={props.unreadLetters} />
+      <Events upcomingEvents={props.upcomingEvents} />
+      <Exams upcomingExams={props.upcomingExams} />
+      <Disabled
+        upcomingEvents={props.upcomingEvents}
+        unreadLetters={props.unreadLetters}
+        upcomingExams={props.upcomingExams}
+      />
     </Layout>
   );
 }
 
 export const getServerSideProps = withAuthAndDB<{
-  unreadLetters: models.Letter[];
-  upcomingEvents: { start: string; events: models.Event[] }[];
-  upcomingExams: models.Exam[];
+  unreadLetters: models.Letter[] | null;
+  upcomingEvents: { start: string; events: models.Event[] }[] | null;
+  upcomingExams: models.Exam[] | null;
   iconsData: UseIconsProps;
-}>(async function getServerSideProps({ user: { jwt: token }, iconsData }) {
+}>(async function getServerSideProps({ user, iconsData }) {
   try {
-    const letters = await getLetters(token);
-
     const collator = new Intl.Collator();
 
-    const unreadLetters = letters.data.filter(
-      (letter) => letter.studentStatuses[0].readTimestamp === null
-    );
+    let lettersToReturn: models.Letter[] | null = null;
 
-    const sortedLetters = unreadLetters.sort((a, b) => collator.compare(a.createdAt, b.createdAt));
+    if (user.settings.lettersEnabled) {
+      const letters = await getLetters(user.jwt);
 
-    const upcomingEvents = await getEvents(token, {
-      start: formatDateToAPI(new Date()),
-      includeHolidays: false,
-      end: formatDateToAPI(dateInTime({ months: 3 }))
-    });
+      const unreadLetters = letters.data.filter(
+        (letter) => letter.studentStatuses[0].readTimestamp === null
+      );
 
-    const allUpcomingEvents = [
-      ...upcomingEvents.data.nonRecurringEvents,
-      ...upcomingEvents.data.recurringEvents
-    ];
+      const sortedLetters = unreadLetters.sort((a, b) =>
+        collator.compare(a.createdAt, b.createdAt)
+      );
 
-    const sortedEvents = allUpcomingEvents.sort((a, b) => collator.compare(a.start, b.start));
+      lettersToReturn = sortedLetters;
+    }
 
-    const groupedEvents = sortedEvents.reduce(
-      (prev, curr) => {
-        const i = prev.findIndex((v) => v.start == curr.start);
-        if (i == -1) {
-          prev.push({ start: curr.start, events: [curr] });
-        } else {
-          prev[i].events.push(curr);
-        }
-        return prev;
-      },
-      [] as {
-        start: string;
-        events: models.Event[];
-      }[]
-    );
+    let eventsToReturn:
+      | {
+          start: string;
+          events: models.Event[];
+        }[]
+      | null = null;
 
-    const student = await getLoginStatus(token);
+    if (user.settings.eventsEnabled) {
+      const upcomingEvents = await getEvents(user.jwt, {
+        start: formatDateToAPI(new Date()),
+        includeHolidays: false,
+        end: formatDateToAPI(dateInTime({ months: 3 }))
+      });
 
-    const upcomingExams = await getExams(token, {
-      start: formatDateToAPI(new Date()),
-      end: formatDateToAPI(dateInTime({ months: 2 })),
-      student: { id: student.data.associatedStudent.id }
-    });
+      const allUpcomingEvents = [
+        ...upcomingEvents.data.nonRecurringEvents,
+        ...upcomingEvents.data.recurringEvents
+      ];
 
-    const sortedExams = upcomingExams.data.sort((a, b) => collator.compare(a.date, b.date));
+      const sortedEvents = allUpcomingEvents.sort((a, b) => collator.compare(a.start, b.start));
 
-    const uniqueExams = [...new Map(sortedExams.map((item) => [item.subject.id, item])).values()];
+      const groupedEvents = sortedEvents.reduce(
+        (prev, curr) => {
+          const i = prev.findIndex((v) => v.start == curr.start);
+          if (i == -1) {
+            prev.push({ start: curr.start, events: [curr] });
+          } else {
+            prev[i].events.push(curr);
+          }
+          return prev;
+        },
+        [] as {
+          start: string;
+          events: models.Event[];
+        }[]
+      );
+
+      eventsToReturn = groupedEvents;
+    }
+
+    let examsToReturn: models.Exam[] | null = null;
+
+    if (user.settings.examsEnabled) {
+      const student = await getLoginStatus(user.jwt);
+
+      const upcomingExams = await getExams(user.jwt, {
+        start: formatDateToAPI(new Date()),
+        end: formatDateToAPI(dateInTime({ months: 2 })),
+        student: { id: student.data.associatedStudent.id }
+      });
+
+      const sortedExams = upcomingExams.data.sort((a, b) => collator.compare(a.date, b.date));
+
+      const uniqueExams = [...new Map(sortedExams.map((item) => [item.subject.id, item])).values()];
+
+      examsToReturn = uniqueExams;
+    }
 
     return {
       props: {
-        unreadLetters: sortedLetters,
-        upcomingEvents: groupedEvents,
-        upcomingExams: uniqueExams,
+        unreadLetters: lettersToReturn,
+        upcomingEvents: eventsToReturn,
+        upcomingExams: examsToReturn,
         iconsData
       }
     };

@@ -83,7 +83,13 @@ export default function Header({ tabs }: Header) {
           <Group position="right">
             <Icons />
             <Account />
-            <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              className={classes.burger}
+              size="sm"
+              title="Navigation"
+            />
           </Group>
         </Group>
       </Container>
