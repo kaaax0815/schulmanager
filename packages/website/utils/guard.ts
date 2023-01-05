@@ -55,6 +55,7 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
     }
 
     console.log('guard:User');
+    console.time('guard:User');
     const user = await prisma.user.findUnique({
       where: {
         sub: session.user.sub
@@ -63,6 +64,8 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
         settings: true
       }
     });
+    console.timeEnd('guard:User');
+    console.log('guard:User end');
 
     if (!user) {
       return {
