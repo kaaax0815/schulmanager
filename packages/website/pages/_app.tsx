@@ -11,6 +11,7 @@ import IconsContext from '@/contexts/icons';
 export default function App({ Component, pageProps }: AppProps) {
   const [messageCount, setMessageCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
+  const { user } = pageProps;
   return (
     <>
       <Head>
@@ -18,7 +19,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <UserProvider>
+      <UserProvider user={user}>
         <MantineProvider
           withGlobalStyles
           withNormalizeCSS

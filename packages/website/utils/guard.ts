@@ -42,8 +42,10 @@ export type withAuthAndDBFunc<T extends Props> = withAuthFunc<T, AuthAndDBProps>
 
 export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
   return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<T>> => {
+    console.log('guard:Session');
     const session = await getSession(ctx.req, ctx.res);
     if (!session?.user) {
+      // TODO: returnTo
       return {
         redirect: {
           destination: '/api/auth/login',
@@ -52,6 +54,7 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
       };
     }
 
+    console.log('guard:User');
     const user = await prisma.user.findUnique({
       where: {
         sub: session.user.sub
@@ -84,6 +87,7 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
     }
 
     try {
+      console.log('guard:Icons');
       const unreadMessages = await countNewMessages(user.jwt);
       const newNotifications = await getNewNotificationsCount(user.jwt);
 

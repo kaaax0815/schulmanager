@@ -40,6 +40,8 @@ export const getServerSideProps = withAuthAndDB<{
   iconsData: UseIconsProps;
 }>(async function getServerSideProps({ user, iconsData }) {
   try {
+    console.log('/:Letters');
+
     const collator = new Intl.Collator();
 
     let lettersToReturn: models.Letter[] | null = null;
@@ -57,6 +59,8 @@ export const getServerSideProps = withAuthAndDB<{
 
       lettersToReturn = sortedLetters;
     }
+
+    console.log('/:Events');
 
     let eventsToReturn:
       | {
@@ -97,6 +101,8 @@ export const getServerSideProps = withAuthAndDB<{
 
       eventsToReturn = groupedEvents;
     }
+
+    console.log('/:Exams');
 
     let examsToReturn: models.Exam[] | null = null;
 
