@@ -1,4 +1,4 @@
-import { Button, Modal, PasswordInput, TextInput } from '@mantine/core';
+import { Button, Modal, PasswordInput, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification, updateNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons';
@@ -75,6 +75,10 @@ export default function GenerateModal({ opened, toggleOpened, setToken }: Genera
 
   return (
     <Modal opened={opened} onClose={() => toggleOpened()} centered title="Token generieren">
+      <Text size="sm" color="dimmed" align="center" mb="xs">
+        Email und Password werden nicht gespeichert. Sie werden ausschließlich für die Generierung
+        des Tokens verwendet.
+      </Text>
       <form onSubmit={submit}>
         <TextInput
           placeholder="user@example.org"

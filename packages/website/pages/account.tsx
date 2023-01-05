@@ -1,5 +1,5 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { ActionIcon, Avatar, Card, Flex, Group, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Avatar, Button, Card, Flex, Group, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 import { showNotification, updateNotification } from '@mantine/notifications';
@@ -122,16 +122,17 @@ export default function Account({
           label="Token"
           autoComplete="off"
           {...form.getInputProps('jwt')}
-          rightSectionWidth={64}
+          rightSectionWidth={150}
           rightSection={
             <Flex align="center" gap={5} mr={3}>
-              <ActionIcon
-                variant="transparent"
+              <Button
+                leftIcon={<IconRefresh size={18} />}
+                compact
                 onClick={() => toggleOpened()}
                 title="Token generieren"
               >
-                <IconRefresh size={18} />
-              </ActionIcon>
+                Generieren
+              </Button>
               <ActionIcon
                 variant="filled"
                 color="blue"
