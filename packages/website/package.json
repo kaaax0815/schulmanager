@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "yarn workspace schulmanager build",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -36,5 +37,6 @@
   },
   "devDependencies": {
     "prisma": "^4.8.0"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
