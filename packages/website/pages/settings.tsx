@@ -6,9 +6,9 @@ import { Settings } from '@prisma/client';
 import { IconCheck, IconX } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 
-import Layout from '../components/layout';
-import useRouterRefresh from '../hooks/useRouterRefresh';
-import { withAuthAndDB } from '../utils/guard';
+import Layout from '@/components/layout';
+import useRouterRefresh from '@/hooks/useRouterRefresh';
+import { withAuthAndDB } from '@/utils/guard';
 
 export default function SettingsPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>

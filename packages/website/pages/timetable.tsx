@@ -9,17 +9,17 @@ import {
   NotAuthenticated
 } from 'schulmanager';
 
-import Layout from '../components/layout';
-import Substitution from '../components/timetable/substitution';
-import useIcons, { UseIconsProps } from '../hooks/useIcons';
+import Layout from '@/components/layout';
+import Substitution from '@/components/timetable/substitution';
+import useIcons, { UseIconsProps } from '@/hooks/useIcons';
 import {
   dateInTime,
   formatApiToHuman,
   formatDateToAPI,
   getLastMonday,
   getUpcomingSunday
-} from '../utils/date';
-import { withAuthAndDB } from '../utils/guard';
+} from '@/utils/date';
+import { withAuthAndDB } from '@/utils/guard';
 
 const useStyles = createStyles((theme) => ({
   border: {

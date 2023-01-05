@@ -3,7 +3,7 @@ import { IconBell, IconMail } from '@tabler/icons';
 import Link from 'next/link';
 import { useContext } from 'react';
 
-import IconsContext from '../../contexts/icons';
+import IconsContext from '@/contexts/icons';
 
 export default function Icons() {
   const iconsContext = useContext(IconsContext);

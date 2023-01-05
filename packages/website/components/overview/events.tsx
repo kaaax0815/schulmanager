@@ -3,7 +3,7 @@ import { IconCalendar } from '@tabler/icons';
 import { Fragment } from 'react';
 import { models } from 'schulmanager';
 
-import { formatApiToHuman } from '../../utils/date';
+import { formatApiToHuman } from '@/utils/date';
 
 export interface EventsProps {
   upcomingEvents: { start: string; events: models.Event[] }[] | null;

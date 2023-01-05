@@ -5,17 +5,17 @@ import { IconRefresh } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import { useReducer } from 'react';
 
-import GenerateModal from '../components/account/generate';
-import StatusActionIcon from '../components/account/icon';
-import Layout from '../components/layout';
-import useRouterRefresh from '../hooks/useRouterRefresh';
-import prisma from '../lib/prisma';
+import GenerateModal from '@/components/account/generate';
+import StatusActionIcon from '@/components/account/icon';
+import Layout from '@/components/layout';
+import useRouterRefresh from '@/hooks/useRouterRefresh';
+import prisma from '@/lib/prisma';
 import {
   FormStatusActionKind,
   formStatusInitialState,
   formStatusReducer
-} from '../reducers/formStatus';
-import { withAuth } from '../utils/guard';
+} from '@/reducers/formStatus';
+import { withAuth } from '@/utils/guard';
 
 export default function Account({
   token,

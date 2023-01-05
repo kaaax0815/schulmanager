@@ -1,7 +1,7 @@
 import { Loader } from '@mantine/core';
 import { IconCheck, IconDeviceFloppy, IconX } from '@tabler/icons';
 
-import { FormStatusActionKind } from '../../reducers/formStatus';
+import { FormStatusActionKind } from '@/reducers/formStatus';
 
 interface StatusActionIconProps {
   status: FormStatusActionKind;

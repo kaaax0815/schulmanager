@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 
-import IconsContext from '../contexts/icons';
+import IconsContext from '@/contexts/icons';
 
 export interface UseIconsProps {
   messageCount: number;

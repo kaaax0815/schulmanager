@@ -3,8 +3,8 @@ import { Settings, User } from '@prisma/client';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { countNewMessages, getNewNotificationsCount, InvalidStatusCode } from 'schulmanager';
 
-import { UseIconsProps } from '../hooks/useIcons';
-import prisma from '../lib/prisma';
+import { UseIconsProps } from '@/hooks/useIcons';
+import prisma from '@/lib/prisma';
 
 export type Props = { [key: string]: unknown } | Promise<{ [key: string]: unknown }>;
 

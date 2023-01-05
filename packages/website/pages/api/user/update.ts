@@ -2,8 +2,8 @@ import { getSession, withApiAuthRequired } from '@auth0/nextjs-auth0';
 import { NextApiHandler } from 'next';
 import { getLoginStatus } from 'schulmanager';
 
-import prisma from '../../../lib/prisma';
-import { UpdateResponse, UpdateSchema } from '../../../schema/update';
+import prisma from '@/lib/prisma';
+import { UpdateResponse, UpdateSchema } from '@/schema/update';
 
 export default withApiAuthRequired(async function handler(req, res) {
   if (req.method !== 'POST') {

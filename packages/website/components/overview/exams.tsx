@@ -2,7 +2,7 @@ import { Card, Group, Table, Text } from '@mantine/core';
 import { IconFilePencil } from '@tabler/icons';
 import { models } from 'schulmanager';
 
-import { formatApiToHuman } from '../../utils/date';
+import { formatApiToHuman } from '@/utils/date';
 
 export interface ExamsProps {
   upcomingExams: models.Exam[] | null;

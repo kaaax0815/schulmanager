@@ -2,7 +2,7 @@ import { Button, Card, Group, Text } from '@mantine/core';
 import { IconMail } from '@tabler/icons';
 import { models } from 'schulmanager';
 
-import { formatApiToHuman } from '../../utils/date';
+import { formatApiToHuman } from '@/utils/date';
 
 export interface LettersProps {
   unreadLetters: models.Letter[] | null;

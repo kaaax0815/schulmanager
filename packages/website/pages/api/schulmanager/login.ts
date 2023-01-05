@@ -2,7 +2,7 @@ import { withApiAuthRequired } from '@auth0/nextjs-auth0';
 import { NextApiHandler } from 'next';
 import { login } from 'schulmanager';
 
-import { LoginResponse, LoginSchema } from '../../../schema/login';
+import { LoginResponse, LoginSchema } from '@/schema/login';
 
 export default withApiAuthRequired(async function handler(req, res) {
   if (req.method !== 'POST') {

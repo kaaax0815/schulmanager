@@ -8,14 +8,14 @@ import {
   models
 } from 'schulmanager';
 
-import Layout from '../components/layout';
-import Disabled from '../components/overview/disabled';
-import Events from '../components/overview/events';
-import Exams from '../components/overview/exams';
-import Letters from '../components/overview/letters';
-import useIcons, { UseIconsProps } from '../hooks/useIcons';
-import { dateInTime, formatDateToAPI } from '../utils/date';
-import { withAuthAndDB } from '../utils/guard';
+import Layout from '@/components/layout';
+import Disabled from '@/components/overview/disabled';
+import Events from '@/components/overview/events';
+import Exams from '@/components/overview/exams';
+import Letters from '@/components/overview/letters';
+import useIcons, { UseIconsProps } from '@/hooks/useIcons';
+import { dateInTime, formatDateToAPI } from '@/utils/date';
+import { withAuthAndDB } from '@/utils/guard';
 
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useIcons(props.iconsData);
