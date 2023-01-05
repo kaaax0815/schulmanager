@@ -29,11 +29,22 @@ export default withApiAuthRequired(async function handler(req, res) {
     return res.status(404).send({ status: 'error', message: 'User not found' });
   }
 
-  const loginStatus = await getLoginStatus(body.data.jwt)
-    .then(() => true)
-    .catch(() => false);
-  if (loginStatus === false) {
-    return res.status(401).send({ status: 'error', message: 'Invalid JWT' });
+  const toUpdate: Omit<UpdateSchema, 'sub'> = {};
+
+  if (body.data.jwt) {
+    const loginStatus = await getLoginStatus(body.data.jwt)
+      .then(() => true)
+      .catch(() => false);
+
+    if (loginStatus === false) {
+      return res.status(401).send({ status: 'error', message: 'Invalid JWT' });
+    }
+
+    toUpdate.jwt = body.data.jwt;
+  }
+
+  if (body.data.settings !== undefined) {
+    toUpdate.settings = body.data.settings;
   }
 
   const updatedUser = await prisma.user.update({
@@ -41,7 +52,12 @@ export default withApiAuthRequired(async function handler(req, res) {
       id: user.id
     },
     data: {
-      jwt: body.data.jwt
+      ...toUpdate,
+      settings: {
+        update: {
+          ...toUpdate.settings
+        }
+      }
     }
   });
   return res.status(200).send({ status: 'success', data: { id: updatedUser.id } });

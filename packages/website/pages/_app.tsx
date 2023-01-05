@@ -1,6 +1,6 @@
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { MantineProvider } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
+import { NotificationsProvider } from '@mantine/notifications';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useState } from 'react';
@@ -9,7 +9,6 @@ import RouterTransition from '../components/routerTransition';
 import IconsContext from '../contexts/icons';
 
 export default function App({ Component, pageProps }: AppProps) {
-  const preferredColorScheme = useColorScheme('dark');
   const [messageCount, setMessageCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
   return (
@@ -24,15 +23,17 @@ export default function App({ Component, pageProps }: AppProps) {
           withGlobalStyles
           withNormalizeCSS
           theme={{
-            colorScheme: preferredColorScheme
+            colorScheme: 'dark'
           }}
         >
-          <IconsContext.Provider
-            value={{ messageCount, notificationCount, setMessageCount, setNotificationCount }}
-          >
-            <RouterTransition />
-            <Component {...pageProps} />
-          </IconsContext.Provider>
+          <NotificationsProvider>
+            <IconsContext.Provider
+              value={{ messageCount, notificationCount, setMessageCount, setNotificationCount }}
+            >
+              <RouterTransition />
+              <Component {...pageProps} />
+            </IconsContext.Provider>
+          </NotificationsProvider>
         </MantineProvider>
       </UserProvider>
     </>

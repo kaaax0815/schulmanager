@@ -1,12 +1,7 @@
-import { Button, Flex, Modal, PasswordInput, Text, TextInput } from '@mantine/core';
-import { useInputState } from '@mantine/hooks';
-import { useReducer } from 'react';
-
-import {
-  FormStatusActionKind,
-  formStatusInitialState,
-  formStatusReducer
-} from '../../reducers/formStatus';
+import { Button, Modal, PasswordInput, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { showNotification, updateNotification } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons';
 
 export interface GenerateModalProps {
   opened: boolean;
@@ -15,42 +10,89 @@ export interface GenerateModalProps {
 }
 
 export default function GenerateModal({ opened, toggleOpened, setToken }: GenerateModalProps) {
-  const [email, setEmail] = useInputState('');
-  const [password, setPassword] = useInputState('');
-  const [status, setStatus] = useReducer(formStatusReducer, formStatusInitialState);
-  const generateToken = async () => {
-    setStatus({ status: FormStatusActionKind.loading });
+  const form = useForm({
+    initialValues: {
+      email: '',
+      password: ''
+    },
+    validate: {
+      email: (value) => {
+        if (!value) {
+          return 'Email darf nicht leer sein';
+        }
+        if (!value.includes('@')) {
+          return 'Email muss eine gültige Email sein';
+        }
+      },
+      password: (value) => {
+        if (!value) {
+          return 'Passwort darf nicht leer sein';
+        }
+      }
+    }
+  });
+
+  const submit = form.onSubmit(async (v) => {
+    showNotification({
+      id: 'generating-token',
+      title: 'Token wird generiert...',
+      message: 'Bitte warten...',
+      loading: true,
+      autoClose: false,
+      disallowClose: true
+    });
     const result = await fetch('/api/schulmanager/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify(v)
     });
     const json = await result.json();
-    if (json.status !== 'success') {
-      setStatus({ status: FormStatusActionKind.error, message: json.message });
-      setTimeout(() => setStatus(formStatusInitialState), 2000);
-      return;
+    if (json.status === 'success') {
+      updateNotification({
+        id: 'generating-token',
+        title: 'Erfolgreich generiert',
+        message: 'Token wurde erfolgreich generiert. Du musst diesen nur noch speichern.',
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 4000
+      });
+      form.reset();
+      setToken(json.data.token);
+      toggleOpened();
+    } else {
+      updateNotification({
+        id: 'generating-token',
+        title: 'Fehler',
+        message: 'Token konnte nicht generiert werden.',
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 2000
+      });
     }
-    setToken(json.data.token);
-    toggleOpened();
-    setStatus(formStatusInitialState);
-  };
+  });
+
   return (
     <Modal opened={opened} onClose={() => toggleOpened()} centered title="JWT Token generieren">
-      <Flex gap="md" direction="column">
-        <TextInput placeholder="user@example.org" label="Email" value={email} onChange={setEmail} />
+      <form onSubmit={submit}>
+        <TextInput
+          placeholder="user@example.org"
+          label="Email"
+          {...form.getInputProps('email')}
+          autoComplete="off"
+        />
         <PasswordInput
           placeholder="SuperSecurePassword"
           label="Password"
-          value={password}
-          onChange={setPassword}
+          {...form.getInputProps('password')}
+          autoComplete="off"
         />
 
-        <Button onClick={generateToken}>Generieren!</Button>
-      </Flex>
-      <Text>{status.message}</Text>
+        <Button mt="xs" type="submit">
+          Generieren!
+        </Button>
+      </form>
     </Modal>
   );
 }

@@ -67,7 +67,6 @@ export default function Account({
 
   // TODO: hide token input if token is set (automatic token update)
   // TODO: show status for token update
-  // TODO: remind to press save after modal
 
   return (
     <Layout>
