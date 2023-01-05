@@ -22,7 +22,7 @@ export function withAuth<T extends Props>(func: withAuthFunc<T>) {
     if (!session?.user) {
       return {
         redirect: {
-          destination: '/api/auth/login',
+          destination: `/api/auth/login?returnTo=${ctx.resolvedUrl}`,
           permanent: false
         }
       };
@@ -42,20 +42,16 @@ export type withAuthAndDBFunc<T extends Props> = withAuthFunc<T, AuthAndDBProps>
 
 export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
   return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<T>> => {
-    console.log('guard:Session');
     const session = await getSession(ctx.req, ctx.res);
     if (!session?.user) {
-      // TODO: returnTo
       return {
         redirect: {
-          destination: '/api/auth/login',
+          destination: `/api/auth/login?returnTo=${ctx.resolvedUrl}`,
           permanent: false
         }
       };
     }
 
-    console.log('guard:User');
-    console.time('guard:User');
     const user = await prisma.user.findUnique({
       where: {
         sub: session.user.sub
@@ -64,8 +60,6 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
         settings: true
       }
     });
-    console.timeEnd('guard:User');
-    console.log('guard:User end');
 
     if (!user) {
       return {
@@ -90,7 +84,6 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
     }
 
     try {
-      console.log('guard:Icons');
       const unreadMessages = await countNewMessages(user.jwt);
       const newNotifications = await getNewNotificationsCount(user.jwt);
 

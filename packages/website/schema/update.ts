@@ -24,4 +24,5 @@ export type UpdateResponse =
   | {
       status: 'error';
       message: string;
+      nachricht?: string;
     };

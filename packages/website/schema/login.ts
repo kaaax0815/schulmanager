@@ -17,4 +17,5 @@ export type LoginResponse =
   | {
       status: 'error';
       message: string;
+      nachricht?: string;
     };

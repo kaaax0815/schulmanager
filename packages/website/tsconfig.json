@@ -20,7 +20,6 @@
       "@/contexts/*": ["contexts/*"],
       "@/hooks/*": ["hooks/*"],
       "@/lib/*": ["lib/*"],
-      "@/reducers/*": ["reducers/*"],
       "@/schema/*": ["schema/*"],
       "@/utils/*": ["utils/*"]
     }

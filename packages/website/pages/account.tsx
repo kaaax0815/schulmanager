@@ -1,20 +1,15 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { ActionIcon, Avatar, Card, Flex, Group, Text, TextInput } from '@mantine/core';
-import { useInputState, useToggle } from '@mantine/hooks';
-import { IconRefresh } from '@tabler/icons';
+import { useForm } from '@mantine/form';
+import { useToggle } from '@mantine/hooks';
+import { showNotification, updateNotification } from '@mantine/notifications';
+import { IconCheck, IconDeviceFloppy, IconRefresh, IconX } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
-import { useReducer } from 'react';
 
 import GenerateModal from '@/components/account/generate';
-import StatusActionIcon from '@/components/account/icon';
 import Layout from '@/components/layout';
 import useRouterRefresh from '@/hooks/useRouterRefresh';
 import prisma from '@/lib/prisma';
-import {
-  FormStatusActionKind,
-  formStatusInitialState,
-  formStatusReducer
-} from '@/reducers/formStatus';
 import { withAuth } from '@/utils/guard';
 
 export default function Account({
@@ -23,8 +18,18 @@ export default function Account({
   errorText
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { user } = useUser();
-  const [jwtToken, setJwtToken] = useInputState(token || '');
-  const [status, setStatus] = useReducer(formStatusReducer, formStatusInitialState);
+  const form = useForm({
+    initialValues: {
+      jwt: token || ''
+    },
+    validate: {
+      jwt: (value) => {
+        if (!value) {
+          return 'Bitte gib einen Token an';
+        }
+      }
+    }
+  });
   const [opened, toggleOpened] = useToggle();
   const routerRefresh = useRouterRefresh();
 
@@ -32,45 +37,60 @@ export default function Account({
     return;
   }
 
-  const setTokenAndSave = (token: string) => {
-    setJwtToken(token);
-  };
-
-  const saveToken = async () => {
-    if (!jwtToken) {
-      setStatus({ status: FormStatusActionKind.error, message: 'Token is required' });
-      setTimeout(() => setStatus(formStatusInitialState), 2000);
-      return;
-    }
+  const submit = form.onSubmit(async (v) => {
+    showNotification({
+      id: 'saving-token',
+      title: 'Token wird gespeichert...',
+      message: 'Bitte warten...',
+      loading: true,
+      autoClose: false,
+      disallowClose: true
+    });
     const pathToCall = userExists ? '/api/user/update' : '/api/user/create';
-    setStatus({ status: FormStatusActionKind.loading });
-    const result = await fetch(pathToCall, {
+    const response = await fetch(pathToCall, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        jwt: jwtToken,
+        jwt: v.jwt,
         sub: user.sub
       })
     });
-    const json = await result.json();
-    if (json.status !== 'success') {
-      setStatus({ status: FormStatusActionKind.error, message: json.message });
-      setTimeout(() => setStatus(formStatusInitialState), 2000);
-      return;
+    const json = await response.json();
+
+    if (json.status === 'success') {
+      updateNotification({
+        id: 'saving-token',
+        title: 'Erfolgreich gespeichert',
+        message: 'Token wurde erfolgreich gespeichert.',
+        color: 'teal',
+        icon: <IconCheck size={18} />,
+        autoClose: 2000
+      });
+      routerRefresh(true);
+    } else {
+      updateNotification({
+        id: 'saving-token',
+        title: 'Fehler',
+        message: `Token konnte nicht gespeichert werden. ${json.nachricht || json.message}`,
+        color: 'red',
+        icon: <IconX size={18} />,
+        autoClose: 2000
+      });
     }
-    setStatus({ status: FormStatusActionKind.success });
-    setTimeout(() => setStatus(formStatusInitialState), 2000);
-    routerRefresh(true);
-  };
+  });
 
   // TODO: hide token input if token is set (automatic token update)
   // TODO: show status for token update
 
   return (
     <Layout>
-      <GenerateModal opened={opened} toggleOpened={toggleOpened} setToken={setTokenAndSave} />
+      <GenerateModal
+        opened={opened}
+        toggleOpened={toggleOpened}
+        setToken={(token) => form.setFieldValue('jwt', token)}
+      />
       {errorText && (
         <Card shadow="sm" radius="md" mt="md">
           <Card.Section
@@ -96,32 +116,42 @@ export default function Account({
         </Flex>
       </Group>
       <h2>Options</h2>
-      <TextInput
-        placeholder="eyJhbGciO..."
-        label="Token"
-        autoComplete="off"
-        value={jwtToken}
-        onChange={setJwtToken}
-        error={status.status === FormStatusActionKind.error ? status.message : undefined}
-        rightSection={
-          <Flex align="center" gap={5} mr={3}>
-            <ActionIcon variant="transparent" onClick={() => toggleOpened()}>
-              <IconRefresh size={18} />
-            </ActionIcon>
-            <ActionIcon variant="filled" color="blue" onClick={saveToken}>
-              <StatusActionIcon status={status.status} />
-            </ActionIcon>
-          </Flex>
-        }
-        rightSectionWidth="xs"
-      />
+      <form onSubmit={submit}>
+        <TextInput
+          placeholder="eyJhbGciO..."
+          label="Token"
+          autoComplete="off"
+          {...form.getInputProps('jwt')}
+          rightSectionWidth={64}
+          rightSection={
+            <Flex align="center" gap={5} mr={3}>
+              <ActionIcon
+                variant="transparent"
+                onClick={() => toggleOpened()}
+                title="Token generieren"
+              >
+                <IconRefresh size={18} />
+              </ActionIcon>
+              <ActionIcon
+                variant="filled"
+                color="blue"
+                type="submit"
+                disabled={!form.isDirty()}
+                title="Token speichern"
+              >
+                <IconDeviceFloppy size={18} />
+              </ActionIcon>
+            </Flex>
+          }
+        />
+      </form>
     </Layout>
   );
 }
 
 const ErrorText = {
   notfound:
-    'Du wurdest scheinbar noch nicht in unserer Datenbank gefunden. Bitte generiere einen Token und speichere diesen.',
+    'Dein Token ist noch nicht in unserer Datenbank. Bitte generiere einen Token und speichere diesen.',
   jwt: 'Der angegebene Token ist ungültig oder abgelaufen. Bitte generiere einen neuen Token.'
 } as const;
 

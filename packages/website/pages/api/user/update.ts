@@ -37,7 +37,9 @@ export default withApiAuthRequired(async function handler(req, res) {
       .catch(() => false);
 
     if (loginStatus === false) {
-      return res.status(401).send({ status: 'error', message: 'Invalid JWT' });
+      return res
+        .status(401)
+        .send({ status: 'error', message: 'Invalid JWT', nachricht: 'Ungültiger Token' });
     }
 
     toUpdate.jwt = body.data.jwt;

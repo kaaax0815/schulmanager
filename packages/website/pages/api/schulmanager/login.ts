@@ -18,7 +18,11 @@ export default withApiAuthRequired(async function handler(req, res) {
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === 'Request failed with status code 401') {
-        return res.status(400).send({ status: 'error', message: 'Invalid Email or Password' });
+        return res.status(400).send({
+          status: 'error',
+          message: 'Invalid Email or Password',
+          nachricht: 'Ungültige E-Mail oder Passwort'
+        });
       }
       return res.status(500).send({ status: 'error', message: error.message });
     }

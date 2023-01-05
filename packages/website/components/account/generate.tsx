@@ -65,7 +65,7 @@ export default function GenerateModal({ opened, toggleOpened, setToken }: Genera
       updateNotification({
         id: 'generating-token',
         title: 'Fehler',
-        message: 'Token konnte nicht generiert werden.',
+        message: `Token konnte nicht generiert werden. ${json.nachricht || json.message}`,
         color: 'red',
         icon: <IconX size={18} />,
         autoClose: 2000
@@ -74,7 +74,7 @@ export default function GenerateModal({ opened, toggleOpened, setToken }: Genera
   });
 
   return (
-    <Modal opened={opened} onClose={() => toggleOpened()} centered title="JWT Token generieren">
+    <Modal opened={opened} onClose={() => toggleOpened()} centered title="Token generieren">
       <form onSubmit={submit}>
         <TextInput
           placeholder="user@example.org"
