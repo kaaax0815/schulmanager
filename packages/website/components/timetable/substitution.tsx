@@ -1,10 +1,8 @@
 import { Group, Popover, Text } from '@mantine/core';
-import { models } from 'schulmanager';
+import { Lesson } from 'types/timetable';
 
 export interface SubstitutionProps {
-  lesson: models.Lesson & {
-    isFree: boolean;
-  };
+  lesson: Lesson;
   substitute: 'subject' | 'teacher' | 'room';
 }
 
@@ -32,7 +30,7 @@ export default function Substitution(props: SubstitutionProps) {
 
   return (
     <Group>
-      {isSubForKey && (
+      {(isSubForKey || props.lesson.isCancelled) && (
         <SubstitutionPopover lesson={props.lesson} substitute={props.substitute} isSubForKey>
           <Text
             fz="xs"
@@ -43,15 +41,17 @@ export default function Substitution(props: SubstitutionProps) {
           </Text>
         </SubstitutionPopover>
       )}
-      <SubstitutionPopover lesson={props.lesson} substitute={props.substitute}>
-        <Text
-          fz="xs"
-          fw={props.substitute === 'subject' ? 700 : undefined}
-          color={isSubForKey ? 'green' : undefined}
-        >
-          {SubstitutionKeys(props)[props.substitute].curr}
-        </Text>
-      </SubstitutionPopover>
+      {!props.lesson.isCancelled && (
+        <SubstitutionPopover lesson={props.lesson} substitute={props.substitute}>
+          <Text
+            fz="xs"
+            fw={props.substitute === 'subject' ? 700 : undefined}
+            color={isSubForKey ? 'green' : undefined}
+          >
+            {SubstitutionKeys(props)[props.substitute].curr}
+          </Text>
+        </SubstitutionPopover>
+      )}
     </Group>
   );
 }

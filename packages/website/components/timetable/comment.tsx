@@ -1,9 +1,9 @@
 import { ActionIcon, Popover, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons';
-import { models } from 'schulmanager';
+import { Lesson } from 'types/timetable';
 
 export interface CommentProps {
-  lesson: models.Lesson;
+  lesson: Lesson;
 }
 
 export default function Comment(props: CommentProps) {

@@ -1,15 +1,11 @@
 import { Card, Center, Container, createStyles, Flex, Grid, Group, Text } from '@mantine/core';
 import { InferGetServerSidePropsType } from 'next';
 import { Fragment } from 'react';
-import {
-  getLessons,
-  getLoginStatus,
-  InvalidStatusCode,
-  models,
-  NotAuthenticated
-} from 'schulmanager';
+import { getLessons, getLoginStatus, InvalidStatusCode, NotAuthenticated } from 'schulmanager';
+import { TimetableEntry } from 'types/timetable';
 
 import Layout from '@/components/layout';
+import Addition from '@/components/timetable/addition';
 import Comment from '@/components/timetable/comment';
 import Substitution from '@/components/timetable/substitution';
 import useIcons, { UseIconsProps } from '@/hooks/useIcons';
@@ -31,7 +27,7 @@ const useStyles = createStyles((theme) => ({
     '> div': {
       borderRight: `1px solid`,
       borderRightColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3],
-      '&:nth-child(6n)': {
+      '&:nth-of-type(6n)': {
         borderRight: 'none'
       }
     }
@@ -71,7 +67,7 @@ export default function Timetable(props: InferGetServerSidePropsType<typeof getS
                   key={classHour.toString() + day.toString()}
                   className={classes.border}
                 >
-                  {!lesson.isFree && lesson.actualLesson && (
+                  {!lesson.isFree && (
                     <Container p={5}>
                       <Group position="apart" spacing={0}>
                         <Substitution substitute="subject" lesson={lesson} />
@@ -81,6 +77,7 @@ export default function Timetable(props: InferGetServerSidePropsType<typeof getS
                         <Substitution substitute="room" lesson={lesson} />
                         <Comment lesson={lesson} />
                       </Center>
+                      <Addition lesson={lesson} />
                     </Container>
                   )}
                 </Grid.Col>
@@ -93,14 +90,8 @@ export default function Timetable(props: InferGetServerSidePropsType<typeof getS
   );
 }
 
-interface FreeLesson {
-  date: string;
-  classHour: { number: string };
-  isFree: true;
-}
-
 export const getServerSideProps = withAuthAndDB<{
-  timetable: ((models.Lesson & { isFree: false }) | FreeLesson)[][];
+  timetable: TimetableEntry[][];
   dates: { weekday: string; date: string }[];
   iconsData: UseIconsProps;
 }>(async function getServerSideProps({ user: { jwt: token }, iconsData, query }) {
@@ -138,21 +129,43 @@ export const getServerSideProps = withAuthAndDB<{
       }, [] as number[])
       .sort((a, b) => a - b);
 
-    const timetable: ((models.Lesson & { isFree: false }) | FreeLesson)[][] = [];
+    const timetable: TimetableEntry[][] = [];
 
     for (const classHour of classHours) {
-      const temp: ((models.Lesson & { isFree: false }) | FreeLesson)[] = [];
+      const temp: TimetableEntry[] = [];
       for (const date of dates) {
         const lesson = schedule.data.find(
-          (lesson) => lesson.classHour.number === classHour.toString() && lesson.date === date
+          (lesson) =>
+            lesson.classHour.number === classHour.toString() &&
+            lesson.date === date &&
+            !lesson.isNew
         );
         temp.push(
           lesson
             ? { ...lesson, isFree: false }
-            : { date: date, classHour: { number: classHour.toString() }, isFree: true }
+            : {
+                date: date,
+                classHour: { number: classHour.toString() },
+                isFree: true
+              }
         );
       }
       timetable.push(temp);
+    }
+
+    const additionalLessons = schedule.data.filter((lesson) => lesson.isNew);
+
+    for (const lesson of additionalLessons) {
+      const classHour = Number.parseInt(lesson.classHour.number);
+      const date = lesson.date;
+      const day = dates.indexOf(date);
+      const hour = classHours.indexOf(classHour);
+      if (timetable[hour][day].addition === undefined) {
+        timetable[hour][day].addition = [];
+      }
+      if (lesson.event) {
+        timetable[hour][day].addition!.push(lesson.event);
+      }
     }
 
     return {
