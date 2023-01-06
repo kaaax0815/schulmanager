@@ -13,8 +13,8 @@ const SubstitutionKeys = (props: Pick<SubstitutionProps, 'lesson'>) =>
       curr: props.lesson.actualLesson?.subjectLabel
     },
     teacher: {
-      prev: props.lesson.originalLessons?.[0].teachers[0].abbreviation,
-      curr: props.lesson.actualLesson?.teachers[0].abbreviation
+      prev: props.lesson.originalLessons?.[0].teachers?.[0]?.abbreviation,
+      curr: props.lesson.actualLesson?.teachers?.[0]?.abbreviation
     },
     room: {
       prev: props.lesson.originalLessons?.[0].room.name,
@@ -29,7 +29,7 @@ export default function Substitution(props: SubstitutionProps) {
       SubstitutionKeys(props)[props.substitute].prev;
 
   return (
-    <Group>
+    <Group spacing={5}>
       {(isSubForKey || props.lesson.isCancelled) && (
         <SubstitutionPopover lesson={props.lesson} substitute={props.substitute} isSubForKey>
           <Text
@@ -69,13 +69,13 @@ const SubstitutionPopoverKeys = (props: Pick<SubstitutionProps, 'lesson'>) =>
     },
     teacher: {
       prev:
-        props.lesson.originalLessons?.[0].teachers[0].lastname +
+        props.lesson.originalLessons?.[0].teachers?.[0]?.lastname +
         ', ' +
-        props.lesson.originalLessons?.[0].teachers[0].firstname,
+        props.lesson.originalLessons?.[0].teachers?.[0]?.firstname,
       curr:
-        props.lesson.actualLesson?.teachers[0].lastname +
+        props.lesson.actualLesson?.teachers?.[0]?.lastname +
         ', ' +
-        props.lesson.actualLesson?.teachers[0].firstname
+        props.lesson.actualLesson?.teachers?.[0]?.firstname
     },
     room: {
       ...SubstitutionKeys(props).room

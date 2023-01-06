@@ -99,3 +99,25 @@ export function dateRange(startDate: Date, endDate: Date, steps = 1) {
 
   return dateArray;
 }
+
+// `getWeekNumber` from <https://weeknumber.com/how-to/javascript>
+/**
+ * @param date The date to get the week number of
+ * @description This does not mutate the date object
+ * @returns The week number of the date
+ */
+export function getWeekNumber(date: Date) {
+  const copiedDate = new Date(date);
+  copiedDate.setHours(0, 0, 0, 0);
+  // Thursday in current week decides the year.
+  copiedDate.setDate(copiedDate.getDate() + 3 - ((copiedDate.getDay() + 6) % 7));
+  // January 4 is always in week 1.
+  const week1 = new Date(copiedDate.getFullYear(), 0, 4);
+  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+  return (
+    1 +
+    Math.round(
+      ((copiedDate.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7
+    )
+  );
+}
