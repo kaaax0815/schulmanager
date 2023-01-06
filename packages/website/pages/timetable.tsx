@@ -10,14 +10,15 @@ import {
 } from 'schulmanager';
 
 import Layout from '@/components/layout';
+import Comment from '@/components/timetable/comment';
 import Substitution from '@/components/timetable/substitution';
 import useIcons, { UseIconsProps } from '@/hooks/useIcons';
 import {
-  dateInTime,
+  dateRange,
   formatApiToHuman,
   formatDateToAPI,
-  getLastMonday,
-  getUpcomingSunday
+  getFridayOfWeek,
+  getMondayOfWeek
 } from '@/utils/date';
 import { withAuthAndDB } from '@/utils/guard';
 
@@ -37,7 +38,6 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-// TODO: comment support
 // TODO: switching between weeks
 
 export default function Timetable(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -79,6 +79,7 @@ export default function Timetable(props: InferGetServerSidePropsType<typeof getS
                       </Group>
                       <Center>
                         <Substitution substitute="room" lesson={lesson} />
+                        <Comment lesson={lesson} />
                       </Center>
                     </Container>
                   )}
@@ -102,24 +103,30 @@ export const getServerSideProps = withAuthAndDB<{
   timetable: ((models.Lesson & { isFree: false }) | FreeLesson)[][];
   dates: { weekday: string; date: string }[];
   iconsData: UseIconsProps;
-}>(async function getServerSideProps({ user: { jwt: token }, iconsData }) {
+}>(async function getServerSideProps({ user: { jwt: token }, iconsData, query }) {
   try {
     const loginStatus = await getLoginStatus(token);
 
-    const dateToCheck = dateInTime({ weeks: 1 });
+    const startQuery = typeof query.start === 'string' ? new Date(query.start) : null;
 
-    const startOfWeek = formatDateToAPI(getLastMonday(dateToCheck));
-    const endOfWeek = formatDateToAPI(getUpcomingSunday(dateToCheck));
+    let startDate = new Date();
+
+    if (startQuery && !isNaN(startQuery.getTime())) {
+      startDate = startQuery;
+    }
+
+    const startOfWeek = getMondayOfWeek(startDate);
+    const endOfWeek = getFridayOfWeek(startDate);
 
     const schedule = await getLessons(token, {
-      start: startOfWeek,
-      end: endOfWeek,
+      start: formatDateToAPI(startOfWeek),
+      end: formatDateToAPI(endOfWeek),
       student: {
         id: loginStatus.data.associatedStudent.id
       }
     });
 
-    const dates = [...new Set(schedule.data.map((lesson) => lesson.date))].sort();
+    const dates = dateRange(startOfWeek, endOfWeek).map((date) => formatDateToAPI(date));
 
     const classHours = schedule.data
       .reduce((acc, lesson) => {

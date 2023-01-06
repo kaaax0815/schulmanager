@@ -5,6 +5,10 @@ export function formatDateToAPI(date: Date) {
   return date.toISOString().split('T')[0];
 }
 
+export function formatApiToDate(date: string) {
+  return new Date(date);
+}
+
 /**
  * @param time The number of months or days, etc to add to the current date. Date object to to add to.
  * @description This does not mutate the date object
@@ -44,30 +48,54 @@ export function formatApiToHuman(date: string, options?: Intl.DateTimeFormatOpti
   return new Date(date).toLocaleDateString('de-DE', defaultOptions);
 }
 
-// `getLastMonday` (modified) and `getUpcomingSunday` (modified) from <https://stackoverflow.com/a/60243057/13707908>
+// `getLastMonday` (modified) and `getUpcomingFriday` (modified) from <https://stackoverflow.com/a/60243057/13707908>
+// Monday is first of the week
 
 /**
- * @param date Date to get the last monday from
+ * @param date Date to get the monday of the week of
  * @description This does not mutate the date object
- * @returns the last monday
+ * @returns the monday of the week
  */
-export function getLastMonday(date = new Date()) {
+export function getMondayOfWeek(date = new Date()) {
   const clonedDate = new Date(date);
   const today = clonedDate.getDate();
   const currentDay = clonedDate.getDay();
-  clonedDate.setDate(today - (currentDay - 1));
+  const daysToSubtract = currentDay === 0 ? 6 : currentDay - 1;
+  clonedDate.setDate(today - daysToSubtract);
   return clonedDate;
 }
 
 /**
- * @param date Date to get the upcoming sunday from
+ * @param date Date to get the friday of the week of
  * @description This does not mutate the date object
- * @returns the upcoming sunday
+ * @returns the friday of the week
  */
-export function getUpcomingSunday(date = new Date()) {
+export function getFridayOfWeek(date = new Date()) {
   const clonedDate = new Date(date);
   const today = clonedDate.getDate();
   const currentDay = clonedDate.getDay();
-  clonedDate.setDate(today - currentDay + 7);
+  const daysToDay = currentDay === 0 ? -2 : 5;
+  clonedDate.setDate(today - currentDay + daysToDay);
   return clonedDate;
+}
+
+// `dateRange` from <https://stackoverflow.com/a/64592438/13707908>
+/**
+ * @param startDate The start date
+ * @param endDate The end date
+ * @param steps The number of days to add to the current date
+ * @description This does not mutate the date object
+ * @returns An array of dates between the start and end date
+ */
+export function dateRange(startDate: Date, endDate: Date, steps = 1) {
+  const dateArray = [];
+  const currentDate = new Date(startDate);
+
+  while (currentDate <= new Date(endDate)) {
+    dateArray.push(new Date(currentDate));
+    // Use UTC date to prevent problems with time zones and DST
+    currentDate.setUTCDate(currentDate.getUTCDate() + steps);
+  }
+
+  return dateArray;
 }

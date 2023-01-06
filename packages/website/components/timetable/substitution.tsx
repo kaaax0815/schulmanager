@@ -29,6 +29,7 @@ export default function Substitution(props: SubstitutionProps) {
     SubstitutionKeys(props)[props.substitute].prev &&
     SubstitutionKeys(props)[props.substitute].curr !==
       SubstitutionKeys(props)[props.substitute].prev;
+
   return (
     <Group>
       {isSubForKey && (
