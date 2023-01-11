@@ -116,7 +116,7 @@ export default function Account({
         </Flex>
       </Group>
       <h2>Options</h2>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} autoComplete="off">
         <TextInput
           placeholder="eyJhbGciO..."
           label="Token"

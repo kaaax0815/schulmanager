@@ -79,7 +79,7 @@ export default function GenerateModal({ opened, toggleOpened, setToken }: Genera
         Email und Password werden nicht gespeichert. Sie werden ausschließlich für die Generierung
         des Tokens verwendet.
       </Text>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} autoComplete="off">
         <TextInput
           placeholder="user@example.org"
           label="Email"
