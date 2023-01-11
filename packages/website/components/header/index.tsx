@@ -74,7 +74,7 @@ export default function Header({ tabs }: Header) {
       <Container pb="xs">
         <Group position="apart">
           <Image
-            src={'/images/logo.png'}
+            src={'/images/logo_512.png'}
             alt="Logo"
             width={40}
             height={40}

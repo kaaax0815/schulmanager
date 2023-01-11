@@ -1,7 +1,5 @@
-import { Button, Container, createStyles, Group, Text } from '@mantine/core';
-import { IconLogin } from '@tabler/icons';
+import { Container, createStyles, Flex, Group, Text, Title } from '@mantine/core';
 import Image from 'next/image';
-import Link from 'next/link';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -9,7 +7,7 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-export default function Logout() {
+export default function Offline() {
   const { classes } = useStyles();
   return (
     <>
@@ -22,13 +20,14 @@ export default function Logout() {
         </Container>
       </nav>
       <main>
-        <Container>
-          <h1>Ausgeloggt</h1>
-          <Text mb="xl">Du wurdest erfolgreich ausgeloggt</Text>
-          <Link href="/">
-            <Button leftIcon={<IconLogin />}>Wieder einloggen</Button>
-          </Link>
-        </Container>
+        <Flex direction="column" align="center" justify="center" h="100%" w="100%">
+          <Title fw={900} size={34}>
+            Du bist offline
+          </Title>
+          <Text color="dimmed" size="lg" align="center">
+            Du bist offline. Bitte überprüfe deine Internetverbindung.
+          </Text>
+        </Flex>
       </main>
     </>
   );

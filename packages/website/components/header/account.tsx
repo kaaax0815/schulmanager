@@ -43,7 +43,7 @@ export default function Account() {
   const { classes, cx } = useStyles();
   const router = useRouter();
 
-  if (!user || isLoading) {
+  if (isLoading) {
     return null;
   }
 
@@ -58,9 +58,9 @@ export default function Account() {
       <Menu.Target>
         <UnstyledButton className={cx(classes.user, { [classes.userActive]: userMenuOpened })}>
           <Group spacing={7}>
-            <Avatar src={user.picture} alt="Avatar" radius="xl" size={20} />
+            <Avatar src={user?.picture} alt="Avatar" radius="xl" size={20} />
             <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3} className={classes.text}>
-              {user.name}
+              {user?.name || 'Offline'}
             </Text>
           </Group>
         </UnstyledButton>
