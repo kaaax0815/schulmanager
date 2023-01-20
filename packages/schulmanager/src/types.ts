@@ -7,6 +7,7 @@ import { Lesson, LessonRequest } from './models/lessons';
 import { Letter } from './models/letters';
 import { Login } from './models/login';
 import { LoginStatus } from './models/loginStatus';
+import { Notification, NotificationsRequest } from './models/notifications';
 import { Settings } from './models/settings';
 import { StatisticBySubject, StatisticByTime, StatisticsRequest } from './models/statistics';
 import { Subscription } from './models/subscriptions';
@@ -22,7 +23,12 @@ export type Modules = keyof Endpoints;
  */
 export interface Endpoints {
   exams: 'get-exams';
-  null: 'get-settings' | 'get-institution' | 'get-current-term' | 'get-new-notifications-count';
+  null:
+    | 'get-settings'
+    | 'get-institution'
+    | 'get-current-term'
+    | 'get-new-notifications-count'
+    | 'get-notifications';
   calendar: 'get-events-for-user';
   schedules: 'get-actual-lessons';
   letters: 'get-letters';
@@ -38,6 +44,7 @@ export interface RequestParams {
   'get-events-for-user': EventsRequest;
   'get-actual-lessons': LessonRequest;
   'get-statistics': StatisticsRequest;
+  'get-notifications': NotificationsRequest;
 }
 
 /**
@@ -63,6 +70,7 @@ export interface ResponseResults {
   /** Don't use this type directly */
   'get-statistics': never;
   'count-new-messages': number;
+  'get-notifications': Notification[];
 }
 
 /**

@@ -9,3 +9,4 @@ export * from './settings';
 export * from './statistics';
 export * from './subscriptions';
 export * from './term';
+export * from './notifications';

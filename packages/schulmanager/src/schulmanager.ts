@@ -7,6 +7,7 @@ import {
 import { EventsRequest } from './models/events';
 import { ExamRequest } from './models/exam';
 import { LessonRequest } from './models/lessons';
+import { NotificationsRequest } from './models/notifications';
 import { StatisticsRequest } from './models/statistics';
 
 /**
@@ -119,4 +120,13 @@ export async function login(email: string, password: string) {
  */
 export async function countNewMessages(token: string) {
   return makeRequest(token, 'messenger', 'count-new-messages', undefined);
+}
+
+/**
+ * Get Notifications
+ * @param token Token
+ * @param params Parameters
+ */
+export async function getNotifications(token: string, params: NotificationsRequest) {
+  return makeRequest(token, 'null', 'get-notifications', params);
 }
