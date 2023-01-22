@@ -27,10 +27,7 @@ export default function Icons() {
           </ActionIcon>
         </Indicator>
       </Link>
-      <Link
-        href="https://login.schulmanager-online.de/#/notifications/view"
-        aria-label="Benachrichtigungen"
-      >
+      <Link href="/notifications" aria-label="Benachrichtigungen">
         <Indicator
           label={iconsContext.notificationCount}
           color="red"
