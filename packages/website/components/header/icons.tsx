@@ -9,10 +9,7 @@ export default function Icons() {
   const iconsContext = useContext(IconsContext);
   return (
     <>
-      <Link
-        href="https://login.schulmanager-online.de/#/modules/messenger/messages"
-        aria-label="Nachrichten"
-      >
+      <Link href="/messages" aria-label="Nachrichten">
         <Indicator
           label={iconsContext.messageCount}
           color="red"

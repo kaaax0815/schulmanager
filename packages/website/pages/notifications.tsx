@@ -45,7 +45,7 @@ export default function Notifications(
               />
             </Card.Section>
             <Card.Section inheritPadding py={3}>
-              <Text size="xs">
+              <Text size="xs" c="dimmed">
                 {formatApiToHuman(notification.createdAt, {
                   weekday: undefined,
                   day: '2-digit',

@@ -1,6 +1,6 @@
 import { Burger, Container, createStyles, Group, Tabs, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { TablerIcon } from '@tabler/icons';
+import { IconChevronLeft, TablerIcon } from '@tabler/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -73,13 +73,16 @@ export default function Header({ tabs }: Header) {
     <nav className={classes.header}>
       <Container pb="xs">
         <Group position="apart">
-          <Image
-            src={'/images/logo_512.png'}
-            alt="Logo"
-            width={40}
-            height={40}
-            onClick={() => router.push('/')}
-          />
+          <Group position="left">
+            {router.pathname !== '/' && <IconChevronLeft size={20} onClick={() => router.back()} />}
+            <Image
+              src={'/images/logo_512.png'}
+              alt="Logo"
+              width={40}
+              height={40}
+              onClick={() => router.push('/')}
+            />
+          </Group>
           <Group position="right">
             <Icons />
             <Account />

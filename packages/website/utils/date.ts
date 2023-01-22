@@ -48,6 +48,20 @@ export function formatApiToHuman(date: string, options?: Intl.DateTimeFormatOpti
   return new Date(date).toLocaleDateString('de-DE', defaultOptions);
 }
 
+/**
+ * @param date The date in the format `2023-01-25T00:00:00.000Z`
+ * @returns The date in the format `12:00`
+ */
+export function formatApiToHumanTime(date: string, options?: Intl.DateTimeFormatOptions) {
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    ...options
+  };
+
+  return new Date(date).toLocaleTimeString('de-DE', defaultOptions);
+}
+
 // `getLastMonday` (modified) and `getUpcomingFriday` (modified) from <https://stackoverflow.com/a/60243057/13707908>
 // Monday is first of the week
 
