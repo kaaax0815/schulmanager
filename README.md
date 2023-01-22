@@ -9,7 +9,12 @@ Website: [schulmanager.kaaaxcreators.de](https://schulmanager.kaaaxcreators.de)
 ## 📖 Documentation
 
 [Website - README](https://github.com/kaaax0815/schulmanager/tree/main/packages/website#readme)
+
 [Schulmanager - README](https://github.com/kaaax0815/schulmanager/tree/main/packages/schulmanager#readme)
+
+## ⚠️ Disclaimer
+
+This monorepo is not affiliated with schulmanager-online.de in any way. It is not supported by schulmanager-online.de and you use it at your own risk.
 
 ## 📜 License
 
