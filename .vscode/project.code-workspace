@@ -34,6 +34,8 @@
       "prisma"
     ],
     "typescript.tsdk": "🌱 Root\\node_modules\\typescript\\lib",
+    "liveServer.settings.multiRootWorkspaceName": "🗄️ Schulmanager",
+    "liveServer.settings.root": "/docs"
   },
   "extensions": {
     "recommendations": ["aaron-bond.better-comments", "streetsidesoftware.code-spell-checker", "irongeek.vscode-env", "dbaeumer.vscode-eslint", "streetsidesoftware.code-spell-checker-german", "visualstudioexptteam.vscodeintellicode", "prisma.prisma", "formulahendry.auto-rename-tag"]

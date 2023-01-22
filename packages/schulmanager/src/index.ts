@@ -4,4 +4,4 @@ export { default as Client } from './client/index';
 export * as api from './api';
 export * from './errors';
 export * as types from './types';
-export * as models from './models';
+export * as models from './models/index';
