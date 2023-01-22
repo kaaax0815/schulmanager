@@ -1,4 +1,4 @@
-import { Anchor, Button, Card, Center, createStyles, Group, Text } from '@mantine/core';
+import { Anchor, Button, Card, Center, createStyles, Group, Text, ThemeIcon } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { IconUser, IconUsers } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
@@ -27,7 +27,7 @@ const useStyles = createStyles((theme) => ({
 export default function Messages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { classes } = useStyles();
 
-  const [lastViewedSubscription] = useLocalStorage<string | undefined>({
+  const [lastViewedSubscription, setLastViewedSubscription] = useLocalStorage<string | undefined>({
     key: 'lastViewedSubscription',
     defaultValue: undefined
   });
@@ -38,8 +38,9 @@ export default function Messages(props: InferGetServerSidePropsType<typeof getSe
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
+      setLastViewedSubscription(undefined);
     }
-  }, [lastViewedSubscription]);
+  }, [lastViewedSubscription, setLastViewedSubscription]);
 
   return (
     <Layout pb="xs">
@@ -56,6 +57,13 @@ export default function Messages(props: InferGetServerSidePropsType<typeof getSe
                 <Text weight={500} size="sm" className={classes.shortText}>
                   {subscription.thread.subject}
                 </Text>
+                {subscription.unreadCount > 0 && (
+                  <ThemeIcon radius="xl" color="red" size="sm">
+                    <Text size="sm">
+                      {subscription.unreadCount > 9 ? '9+' : subscription.unreadCount}
+                    </Text>
+                  </ThemeIcon>
+                )}
               </Group>
             </Card.Section>
             <Card.Section inheritPadding py={5}>
