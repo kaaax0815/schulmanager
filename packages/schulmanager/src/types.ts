@@ -7,6 +7,7 @@ import { Lesson, LessonRequest } from './models/lessons';
 import { Letter } from './models/letters';
 import { Login } from './models/login';
 import { LoginStatus } from './models/loginStatus';
+import { Messages, MessagesRequest } from './models/messages';
 import { Notification, NotificationsRequest } from './models/notifications';
 import { Settings } from './models/settings';
 import { StatisticBySubject, StatisticByTime, StatisticsRequest } from './models/statistics';
@@ -32,7 +33,7 @@ export interface Endpoints {
   calendar: 'get-events-for-user';
   schedules: 'get-actual-lessons';
   letters: 'get-letters';
-  messenger: 'get-subscriptions' | 'count-new-messages';
+  messenger: 'get-subscriptions' | 'count-new-messages' | 'get-messages-by-subscription';
   classbook: 'get-statistics';
 }
 
@@ -45,6 +46,7 @@ export interface RequestParams {
   'get-actual-lessons': LessonRequest;
   'get-statistics': StatisticsRequest;
   'get-notifications': NotificationsRequest;
+  'get-messages-by-subscription': MessagesRequest;
 }
 
 /**
@@ -71,6 +73,7 @@ export interface ResponseResults {
   'get-statistics': never;
   'count-new-messages': number;
   'get-notifications': Notification[];
+  'get-messages-by-subscription': Messages | undefined;
 }
 
 /**

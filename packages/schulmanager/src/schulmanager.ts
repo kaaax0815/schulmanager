@@ -7,6 +7,7 @@ import {
 import { EventsRequest } from './models/events';
 import { ExamRequest } from './models/exam';
 import { LessonRequest } from './models/lessons';
+import { MessagesRequest } from './models/messages';
 import { NotificationsRequest } from './models/notifications';
 import { StatisticsRequest } from './models/statistics';
 
@@ -129,4 +130,13 @@ export async function countNewMessages(token: string) {
  */
 export async function getNotifications(token: string, params: NotificationsRequest) {
   return makeRequest(token, 'null', 'get-notifications', params);
+}
+
+/**
+ * Get Messages by Subscription
+ * @param token Token
+ * @param params Parameters
+ */
+export async function getMessagesBySubscription(token: string, params: MessagesRequest) {
+  return makeRequest(token, 'messenger', 'get-messages-by-subscription', params);
 }

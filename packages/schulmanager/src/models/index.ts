@@ -10,3 +10,4 @@ export * from './statistics';
 export * from './subscriptions';
 export * from './term';
 export * from './notifications';
+export * from './messages';
