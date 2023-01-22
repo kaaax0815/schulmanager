@@ -84,7 +84,7 @@ export default function Timetable(props: InferGetServerSidePropsType<typeof getS
 
   return (
     <Layout px="xs" pb="xs">
-      <Card shadow="sm" radius="md" mt="xs" mih={660}>
+      <Card shadow="sm" mt="xs" mih={660}>
         <Card.Section withBorder inheritPadding py="xs">
           <Grid columns={3} justify="space-around" m={0}>
             <Button variant="light" compact onClick={today}>

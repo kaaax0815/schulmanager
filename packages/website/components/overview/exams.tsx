@@ -15,7 +15,7 @@ export default function Exams(props: ExamsProps) {
 
   return (
     <>
-      <Card shadow="sm" radius="md" mt="md">
+      <Card shadow="sm" mt="md">
         <Card.Section withBorder inheritPadding py="xs">
           <Group>
             <IconFilePencil size={20} />

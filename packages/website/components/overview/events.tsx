@@ -16,7 +16,7 @@ export default function Events(props: EventsProps) {
 
   return (
     <>
-      <Card shadow="sm" radius="md" mt="md">
+      <Card shadow="sm" mt="md">
         <Card.Section withBorder inheritPadding py="xs">
           <Group>
             <IconCalendar size={20} />

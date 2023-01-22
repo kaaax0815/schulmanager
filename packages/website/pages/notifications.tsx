@@ -2,7 +2,7 @@ import { Card, createStyles, Group, Text } from '@mantine/core';
 import { IconClockHour9 } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
-import { getNotifications } from 'schulmanager';
+import { getNotifications, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
 import { formatApiToHuman } from '@/utils/date';
@@ -21,13 +21,13 @@ export default function Notifications(
   const { classes } = useStyles();
   return (
     <Layout pb="md">
-      {props.notifications.data.map((notification) => (
+      {props.notifications.map((notification) => (
         <Link
           key={notification.id}
           href={parseNotificationLink(notification)}
           className={classes.link}
         >
-          <Card shadow="sm" radius="md" mt="xs">
+          <Card shadow="sm" mt="xs">
             <Card.Section withBorder inheritPadding py={5}>
               <Group>
                 <IconClockHour9 size={18} />
@@ -63,14 +63,16 @@ export default function Notifications(
   );
 }
 
-export const getServerSideProps = withAuthAndDB(async function getServerSideProps({ user }) {
+export const getServerSideProps = withAuthAndDB<{
+  notifications: models.Notification[];
+}>(async function getServerSideProps({ user }) {
   const notifications = await getNotifications(user.jwt, {
     updateLastSeenNotificationTimestamp: true
   });
 
   return {
     props: {
-      notifications
+      notifications: notifications.data
     }
   };
 });

@@ -92,7 +92,7 @@ export default function Account({
         setToken={(token) => form.setFieldValue('jwt', token)}
       />
       {errorText && (
-        <Card shadow="sm" radius="md" mt="md">
+        <Card shadow="sm" mt="md">
           <Card.Section
             withBorder
             inheritPadding

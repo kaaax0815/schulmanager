@@ -16,7 +16,7 @@ export default function Letters(props: LettersProps) {
   return (
     <>
       {props.unreadLetters.map((letter) => (
-        <Card shadow="sm" radius="md" mt="md" key={letter.id}>
+        <Card shadow="sm" mt="md" key={letter.id}>
           <Card.Section withBorder inheritPadding py="xs">
             <Group>
               <IconMail size={20} />
