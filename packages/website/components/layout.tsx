@@ -21,7 +21,6 @@ const useStyles = createStyles((theme) => ({
   }
 }));
 
-// TODO: pull to refresh for container
 export default function Layout({ children, ...rest }: LayoutProps) {
   const { classes } = useStyles();
   return (
