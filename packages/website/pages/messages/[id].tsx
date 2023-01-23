@@ -1,5 +1,6 @@
 import { Badge, Card, Center, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
+import linkifyStr from 'linkify-string';
 import { InferGetServerSidePropsType } from 'next';
 import { useEffect, useRef } from 'react';
 import { getLoginStatus, getMessagesBySubscription, getSubscriptions, models } from 'schulmanager';
@@ -49,7 +50,16 @@ export default function Thread(props: InferGetServerSidePropsType<typeof getServ
                 </Text>
               </Card.Section>
               <Card.Section inheritPadding pt={5}>
-                {message.text}
+                <Text
+                  dangerouslySetInnerHTML={{
+                    __html: linkifyStr(message.text, {
+                      defaultProtocol: 'https',
+                      target: '_blank',
+                      truncate: 42,
+                      nl2br: true
+                    })
+                  }}
+                ></Text>
               </Card.Section>
               <Card.Section inheritPadding pt={5}>
                 <Text align="right" c="dimmed">
