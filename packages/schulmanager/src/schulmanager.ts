@@ -40,7 +40,7 @@ export async function getLoginStatus(token: string) {
   };
 
   const response = await axios<LoginStatus>(`${BASE_URL}/login-status`, {
-    method: 'GET',
+    method: 'POST',
     headers,
     responseType: 'json'
   });
