@@ -11,10 +11,21 @@ yarn add schulmanager
 ## 🚀 Usage
 
 ```ts
-import { getLoginStatus, login } from "schulmanager";
+import { batchRequest, get, login } from "schulmanager";
 
-const { token } = await login("email", "password");
+const { token } = await login('email', 'password');
+
 const loginStatus = await getLoginStatus(token);
+
+const response = await batchRequest(token, [
+  get('letters:get-letters', undefined),
+  get('null:get-current-term', undefined),
+  get('schedules:get-actual-lessons', {
+    start: '2020-01-01',
+    end: '2020-12-31',
+    student: { id: loginStatus.data.associatedStudent.id }
+  })
+] as const);
 ```
 
 ## 📖 Documentation

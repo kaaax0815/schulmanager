@@ -24,6 +24,6 @@ export interface LoginUser {
 }
 
 export interface Login {
-  user: string;
+  user: LoginUser;
   jwt: string;
 }

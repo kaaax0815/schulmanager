@@ -1,141 +1,111 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
-
-import { Events, EventsRequest } from './models/events';
-import { Exam, ExamRequest } from './models/exam';
-import { Institution } from './models/institution';
-import { Lesson, LessonRequest } from './models/lessons';
-import { Letter } from './models/letters';
-import { Login } from './models/login';
-import { LoginStatus } from './models/loginStatus';
-import { Messages, MessagesRequest } from './models/messages';
-import { Notification, NotificationsRequest } from './models/notifications';
-import { Settings } from './models/settings';
-import { StatisticBySubject, StatisticByTime, StatisticsRequest } from './models/statistics';
-import { Subscription } from './models/subscriptions';
-import { Term } from './models/term';
+import { getResults } from './batch';
+import {
+  Events,
+  EventsRequest,
+  Exam,
+  ExamRequest,
+  Institution,
+  Lesson,
+  LessonRequest,
+  Letter,
+  Messages,
+  MessagesRequest,
+  Notification,
+  NotificationsRequest,
+  Settings,
+  StatisticBySubject,
+  StatisticByTime,
+  StatisticsRequest,
+  Subscription,
+  Term
+} from './models';
 
 /**
- * Supported Modules
+ * List of all possible Requests with their Parameters and Response
+ * ":" is used to separate Module and Endpoint
+ * "+" is used to separate multiple Requests with same Id but different Parameters and Response
  */
-export type Modules = keyof Endpoints;
-
-/**
- * Supported Endpoint(s) for the specified Module
- */
-export interface Endpoints {
-  exams: 'get-exams';
-  null:
-    | 'get-settings'
-    | 'get-institution'
-    | 'get-current-term'
-    | 'get-new-notifications-count'
-    | 'get-notifications';
-  calendar: 'get-events-for-user';
-  schedules: 'get-actual-lessons';
-  letters: 'get-letters';
-  messenger: 'get-subscriptions' | 'count-new-messages' | 'get-messages-by-subscription';
-  classbook: 'get-statistics';
+export interface Results {
+  'null:get-settings': {
+    parameters: undefined;
+    response: Settings;
+  };
+  'null:get-institution': {
+    parameters: undefined;
+    response: Institution;
+  };
+  'null:get-current-term': {
+    parameters: undefined;
+    response: Term;
+  };
+  'null:get-new-notifications-count': {
+    parameters: undefined;
+    response: number;
+  };
+  'null:get-notifications': {
+    parameters: NotificationsRequest;
+    response: Notification[];
+  };
+  'exams:get-exams': {
+    parameters: ExamRequest;
+    response: Exam[];
+  };
+  'calendar:get-events-for-user': {
+    parameters: EventsRequest;
+    response: Events;
+  };
+  'schedules:get-actual-lessons': {
+    parameters: LessonRequest;
+    response: Lesson[];
+  };
+  'letters:get-letters': {
+    parameters: undefined;
+    response: Letter[];
+  };
+  'messenger:get-subscriptions': {
+    parameters: undefined;
+    response: Subscription[];
+  };
+  'messenger:count-new-messages': {
+    parameters: undefined;
+    response: number;
+  };
+  'messenger:get-messages-by-subscription': {
+    parameters: MessagesRequest;
+    response: Messages | undefined;
+  };
+  'classbook:get-statistics+time': {
+    parameters: StatisticsRequest<'time'>;
+    response: StatisticByTime;
+  };
+  'classbook:get-statistics+subject': {
+    parameters: StatisticsRequest<'subject'>;
+    response: StatisticBySubject[];
+  };
+}
+export interface IBatchRequest<Id extends keyof Results = keyof Results> {
+  id: Id;
+  moduleName: ReturnType<typeof getResults>['moduleName'];
+  endpointName: ReturnType<typeof getResults>['endpointName'];
+  parameters: Results[Id]['parameters'];
 }
 
-/**
- * Parameters required for the specified Endpoint
- */
-export interface RequestParams {
-  'get-exams': ExamRequest;
-  'get-events-for-user': EventsRequest;
-  'get-actual-lessons': LessonRequest;
-  'get-statistics': StatisticsRequest;
-  'get-notifications': NotificationsRequest;
-  'get-messages-by-subscription': MessagesRequest;
-}
-
-/**
- * Takes the correct parameters for the specified Endpoint or undefined if no parameters are required
- */
-export type RequestParamsHelper<T extends Endpoints[Modules]> = T extends keyof RequestParams
-  ? RequestParams[T]
-  : undefined;
-
-/**
- * Response Result for the specified Endpoint
- */
-export interface ResponseResults {
-  'get-settings': Settings;
-  'get-exams': Exam[];
-  'get-events-for-user': Events;
-  'get-actual-lessons': Lesson[];
-  'get-institution': Institution;
-  'get-current-term': Term;
-  'get-new-notifications-count': number;
-  'get-letters': Letter[];
-  'get-subscriptions': Subscription[];
-  /** Don't use this type directly */
-  'get-statistics': never;
-  'count-new-messages': number;
-  'get-notifications': Notification[];
-  'get-messages-by-subscription': Messages | undefined;
-}
-
-/**
- * What the Raw Response Body looks like
- */
-export interface ResponseBody<T extends Endpoints[Modules]> {
-  results: { 0: Results<T> };
+/** Response of API with `/calls` Endpoint */
+export interface APIResponse<Results> {
   systemStatusMessages: unknown[];
+  results: {
+    [ResultsIndex in keyof Results]: APIResult<Results[ResultsIndex]>;
+  };
 }
 
-export interface Results<T extends Endpoints[Modules]> {
-  /** HTTP Status Code */
+/**
+ * Type of each Result of API with `/calls` Endpoint
+ */
+export interface APIResult<Data> {
   status: number;
-  /** The actual data */
-  data: ResponseResults[T];
+  data: Data;
 }
 
-/**
- * The raw request body
- */
-export interface RequestBody<T extends Modules> {
-  bundleVersion: string;
-  requests: { 0: Request<T> };
-}
-
-export interface Request<T extends Modules> {
-  moduleName: T;
-  endpointName: Endpoints[T];
-  parameters: RequestParamsHelper<Endpoints[T]>;
-}
-
-/**
- * The Output the function returns
- */
-export interface Response<T> {
-  /** New Token thats valid for 1d */
-  newToken: string;
-  data: T;
-}
-
-export interface LoginResponse<T> {
-  /** New Token thats valid for 1d */
-  token: string;
-  data: T;
-}
-
-export type LoginStatusResponseBody = LoginStatus;
-export type LoginStatusResponseResult = LoginStatus['user'];
-
-export type LoginResponseBody = Login;
-export type LoginResponseResult = Login['user'];
-
-export type StatisticsResult<T extends 'time' | 'subject'> = T extends 'time'
-  ? StatisticByTime
-  : StatisticBySubject[];
-
-/**
- * Wrapper around axios
- */
-export interface MakeRawRequest<T> {
-  endpoint: '/calls' | '/login-status' | '/login';
-  body: unknown;
-  options: AxiosRequestConfig<unknown>;
-  responseValidator: (response: AxiosResponse<T>['data']) => void;
-}
+export type ResponseList<Requests extends readonly IBatchRequest[]> = {
+  [RequestsIndex in keyof Requests]: Results[Requests[RequestsIndex]['id']]['response'];
+};

@@ -34,7 +34,7 @@ export interface LessonData {
  */
 export type Statistic = StatisticBySubject[] | StatisticByTime;
 
-export interface StatisticsRequest<T extends 'time' | 'subject' = 'time' | 'subject'> {
+export interface StatisticsRequest<T extends 'time' | 'subject'> {
   by: T;
   /** @format `YYYY-MM-DD` */
   from: string;
