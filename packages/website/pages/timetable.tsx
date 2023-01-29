@@ -14,7 +14,13 @@ import { IconChevronLeft, IconChevronRight } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import { Fragment, useMemo } from 'react';
-import { getLessons, getLoginStatus, InvalidStatusCode, NotAuthenticated } from 'schulmanager';
+import {
+  batchRequest,
+  get,
+  getLoginStatus,
+  InvalidStatusCode,
+  NotAuthenticated
+} from 'schulmanager';
 import { TimetableEntry } from 'types/timetable';
 
 import Layout from '@/components/layout';
@@ -156,10 +162,8 @@ export const getServerSideProps = withAuthAndDB<{
   timetable: TimetableEntry[][];
   dates: { weekday: string; date: string }[];
   iconsData: UseIconsProps;
-}>(async function getServerSideProps({ user: { jwt: token }, iconsData, query }) {
+}>(async function getServerSideProps({ user, iconsData, query }) {
   try {
-    const loginStatus = await getLoginStatus(token);
-
     const startQuery = typeof query.start === 'string' ? new Date(query.start) : null;
 
     if (!startQuery) {
@@ -184,17 +188,23 @@ export const getServerSideProps = withAuthAndDB<{
 
     const endOfWeek = getFridayOfWeek(startQuery);
 
-    const schedule = await getLessons(token, {
-      start: formatDateToAPI(startOfWeek),
-      end: formatDateToAPI(endOfWeek),
-      student: {
-        id: loginStatus.data.associatedStudent.id
-      }
-    });
+    const loginStatus = await getLoginStatus(user.jwt);
+
+    const response = await batchRequest(user.jwt, [
+      get('schedules:get-actual-lessons', {
+        start: formatDateToAPI(startOfWeek),
+        end: formatDateToAPI(endOfWeek),
+        student: {
+          id: loginStatus.data.associatedStudent.id
+        }
+      })
+    ] as const);
+
+    const schedule = response.results[0];
 
     const dates = dateRange(startOfWeek, endOfWeek).map((date) => formatDateToAPI(date));
 
-    const classHours = schedule.data
+    const classHours = schedule
       .reduce((acc, lesson) => {
         const classHour = Number.parseInt(lesson.classHour.number);
         if (!acc.includes(classHour)) {
@@ -209,7 +219,7 @@ export const getServerSideProps = withAuthAndDB<{
     for (const classHour of classHours) {
       const temp: TimetableEntry[] = [];
       for (const date of dates) {
-        const lesson = schedule.data.find(
+        const lesson = schedule.find(
           (lesson) =>
             lesson.classHour.number === classHour.toString() &&
             lesson.date === date &&
@@ -228,7 +238,7 @@ export const getServerSideProps = withAuthAndDB<{
       timetable.push(temp);
     }
 
-    const additionalLessons = schedule.data.filter((lesson) => lesson.isNew);
+    const additionalLessons = schedule.filter((lesson) => lesson.isNew);
 
     for (const lesson of additionalLessons) {
       const classHour = Number.parseInt(lesson.classHour.number);

@@ -1,12 +1,5 @@
 import { InferGetServerSidePropsType } from 'next';
-import {
-  getEvents,
-  getExams,
-  getLetters,
-  getLoginStatus,
-  InvalidStatusCode,
-  models
-} from 'schulmanager';
+import { batchRequest, get, getLoginStatus, InvalidStatusCode, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
 import Disabled from '@/components/overview/disabled';
@@ -44,10 +37,26 @@ export const getServerSideProps = withAuthAndDB<{
 
     let lettersToReturn: models.Letter[] | null = null;
 
-    if (user.settings.lettersEnabled) {
-      const letters = await getLetters(user.jwt);
+    const student = await getLoginStatus(user.jwt);
 
-      const unreadLetters = letters.data.filter(
+    const response = await batchRequest(user.jwt, [
+      get('letters:get-letters'),
+      get('calendar:get-events-for-user', {
+        start: formatDateToAPI(new Date()),
+        includeHolidays: false,
+        end: formatDateToAPI(dateInTime({ months: 3 }))
+      }),
+      get('exams:get-exams', {
+        start: formatDateToAPI(new Date()),
+        end: formatDateToAPI(dateInTime({ months: 2 })),
+        student: { id: student.data.associatedStudent.id }
+      })
+    ] as const);
+
+    if (user.settings.lettersEnabled) {
+      const letters = response.results[0];
+
+      const unreadLetters = letters.filter(
         (letter) => letter.studentStatuses[0].readTimestamp === null
       );
 
@@ -66,15 +75,11 @@ export const getServerSideProps = withAuthAndDB<{
       | null = null;
 
     if (user.settings.eventsEnabled) {
-      const upcomingEvents = await getEvents(user.jwt, {
-        start: formatDateToAPI(new Date()),
-        includeHolidays: false,
-        end: formatDateToAPI(dateInTime({ months: 3 }))
-      });
+      const upcomingEvents = response.results[1];
 
       const allUpcomingEvents = [
-        ...upcomingEvents.data.nonRecurringEvents,
-        ...upcomingEvents.data.recurringEvents
+        ...upcomingEvents.nonRecurringEvents,
+        ...upcomingEvents.recurringEvents
       ];
 
       const sortedEvents = allUpcomingEvents.sort((a, b) => collator.compare(a.start, b.start));
@@ -101,15 +106,9 @@ export const getServerSideProps = withAuthAndDB<{
     let examsToReturn: models.Exam[] | null = null;
 
     if (user.settings.examsEnabled) {
-      const student = await getLoginStatus(user.jwt);
+      const upcomingExams = response.results[2];
 
-      const upcomingExams = await getExams(user.jwt, {
-        start: formatDateToAPI(new Date()),
-        end: formatDateToAPI(dateInTime({ months: 2 })),
-        student: { id: student.data.associatedStudent.id }
-      });
-
-      const sortedExams = upcomingExams.data.sort((a, b) => collator.compare(a.date, b.date));
+      const sortedExams = upcomingExams.sort((a, b) => collator.compare(a.date, b.date));
 
       const uniqueExams = [...new Map(sortedExams.map((item) => [item.subject.id, item])).values()];
 

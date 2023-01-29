@@ -1,7 +1,7 @@
 import { getSession, Session } from '@auth0/nextjs-auth0';
 import { Settings, User } from '@prisma/client';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { countNewMessages, getNewNotificationsCount, InvalidStatusCode } from 'schulmanager';
+import { batchRequest, get, MissingNewToken } from 'schulmanager';
 
 import { UseIconsProps } from '@/hooks/useIcons';
 import prisma from '@/lib/prisma';
@@ -84,17 +84,19 @@ export function withAuthAndDB<T extends Props>(func: withAuthAndDBFunc<T>) {
     }
 
     try {
-      const unreadMessages = await countNewMessages(user.jwt);
-      const newNotifications = await getNewNotificationsCount(user.jwt);
+      const icons = await batchRequest(user.jwt, [
+        get('messenger:count-new-messages'),
+        get('null:get-new-notifications-count')
+      ] as const);
 
       const iconsData = {
-        messageCount: unreadMessages.data,
-        notificationCount: newNotifications.data
+        messageCount: icons.results[0],
+        notificationCount: icons.results[1]
       };
 
       return func({ ...ctx, session, user: userAndSettings, iconsData });
     } catch (e) {
-      if (e instanceof InvalidStatusCode) {
+      if (e instanceof MissingNewToken) {
         return {
           redirect: {
             destination: '/account?error=jwt',

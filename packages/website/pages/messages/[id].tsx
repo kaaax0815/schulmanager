@@ -3,7 +3,7 @@ import { useLocalStorage } from '@mantine/hooks';
 import linkifyStr from 'linkify-string';
 import { InferGetServerSidePropsType } from 'next';
 import { useEffect, useRef } from 'react';
-import { getLoginStatus, getMessagesBySubscription, getSubscriptions, models } from 'schulmanager';
+import { batchRequest, get, getLoginStatus, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
 import { formatApiToHuman, formatApiToHumanTime } from '@/utils/date';
@@ -91,21 +91,26 @@ export const getServerSideProps = withAuthAndDB<{
 
   const loginStatus = await getLoginStatus(user.jwt);
 
-  const subscriptions = await getSubscriptions(user.jwt);
+  const response = await batchRequest(user.jwt, [
+    get('messenger:get-subscriptions'),
+    get('messenger:get-messages-by-subscription', {
+      subscriptionId: query.id
+    })
+  ] as const);
 
-  const messagesBySubscription = await getMessagesBySubscription(user.jwt, {
-    subscriptionId: query.id
-  });
+  const subscriptions = response.results[0];
 
-  if (messagesBySubscription.data === undefined) {
+  const messagesBySubscription = response.results[1];
+
+  if (messagesBySubscription === undefined) {
     return {
       notFound: true
     };
   }
 
-  const subscription = subscriptions.data.find((s) => s.id === query.id) as models.Subscription;
+  const subscription = subscriptions.find((s) => s.id === query.id) as models.Subscription;
 
-  const groupMessagesByCreatedAtDaily = messagesBySubscription.data.messages.reduceRight(
+  const groupMessagesByCreatedAtDaily = messagesBySubscription.messages.reduceRight(
     (prev, curr) => {
       const day = formatApiToHuman(curr.createdAt, {
         weekday: undefined

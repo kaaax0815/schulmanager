@@ -2,7 +2,7 @@ import { Card, createStyles, Group, Text } from '@mantine/core';
 import { IconClockHour9 } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
-import { getNotifications, models } from 'schulmanager';
+import { batchRequest, get, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
 import { formatApiToHuman } from '@/utils/date';
@@ -66,13 +66,17 @@ export default function Notifications(
 export const getServerSideProps = withAuthAndDB<{
   notifications: models.Notification[];
 }>(async function getServerSideProps({ user }) {
-  const notifications = await getNotifications(user.jwt, {
-    updateLastSeenNotificationTimestamp: true
-  });
+  const response = await batchRequest(user.jwt, [
+    get('null:get-notifications', {
+      updateLastSeenNotificationTimestamp: true
+    })
+  ] as const);
+
+  const notifications = response.results[0];
 
   return {
     props: {
-      notifications: notifications.data
+      notifications: notifications
     }
   };
 });

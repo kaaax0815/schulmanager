@@ -4,7 +4,7 @@ import { IconUser, IconUsers } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { getSubscriptions, models } from 'schulmanager';
+import { batchRequest, get, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
 import { formatApiToHuman } from '@/utils/date';
@@ -101,11 +101,12 @@ export default function Messages(props: InferGetServerSidePropsType<typeof getSe
 export const getServerSideProps = withAuthAndDB<{
   subscriptions: models.Subscription[];
 }>(async function getServerSideProps({ user }) {
-  const subscriptions = await getSubscriptions(user.jwt);
+  const response = await batchRequest(user.jwt, [get('messenger:get-subscriptions')] as const);
+  const subscriptions = response.results[0];
 
   return {
     props: {
-      subscriptions: subscriptions.data.slice(-50).reverse()
+      subscriptions: subscriptions.slice(-50).reverse()
     }
   };
 });
