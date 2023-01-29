@@ -28,8 +28,8 @@ export function getResults(id: keyof Results): {
  * @example
  * ```ts
  * const { newToken, results } = await batchRequest('token', [
- *   get('letters:get-letters', undefined),
- *   get('null:get-current-term', undefined),
+ *   get('letters:get-letters'),
+ *   get('null:get-current-term'),
  *   get('schedules:get-actual-lessons', {
  *     start: '2020-01-01',
  *     end: '2020-12-31',
@@ -85,7 +85,7 @@ export async function batchRequest<Requests extends readonly IBatchRequest[]>(
  */
 export function get<Id extends keyof Results>(
   id: Id,
-  params: Results[Id]['parameters']
+  ...[params]: Results[Id]['parameters'] extends undefined ? [] : [Results[Id]['parameters']]
 ): IBatchRequest<Id> {
   const moduleName = getResults(id).moduleName;
   const endpointName = getResults(id).endpointName;

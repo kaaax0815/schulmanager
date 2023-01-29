@@ -18,8 +18,8 @@ const { token } = await login('email', 'password');
 const loginStatus = await getLoginStatus(token);
 
 const response = await batchRequest(token, [
-  get('letters:get-letters', undefined),
-  get('null:get-current-term', undefined),
+  get('letters:get-letters'),
+  get('null:get-current-term'),
   get('schedules:get-actual-lessons', {
     start: '2020-01-01',
     end: '2020-12-31',
