@@ -1,4 +1,4 @@
-import { Burger, Container, createStyles, Group, Tabs, Text } from '@mantine/core';
+import { ActionIcon, Burger, Container, createStyles, Group, Tabs, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronLeft, TablerIcon } from '@tabler/icons';
 import Image from 'next/image';
@@ -74,7 +74,11 @@ export default function Header({ tabs }: Header) {
       <Container pb="xs">
         <Group position="apart">
           <Group position="left">
-            {router.pathname !== '/' && <IconChevronLeft size={20} onClick={() => router.back()} />}
+            {router.pathname !== '/' && (
+              <ActionIcon title="Zurück">
+                <IconChevronLeft size={20} onClick={() => router.back()} />
+              </ActionIcon>
+            )}
             <Image
               src={'/images/logo_512.png'}
               alt="Logo"
