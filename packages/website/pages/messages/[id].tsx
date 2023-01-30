@@ -24,7 +24,6 @@ export default function Thread(props: InferGetServerSidePropsType<typeof getServ
   useEffect(() => {
     setLastViewedSubscription(props.subscription.id);
   }, [props.subscription.id, setLastViewedSubscription]);
-
   return (
     <Layout pb="xs">
       <Text weight={500} size="lg" align="center" mt="xs">
@@ -60,6 +59,17 @@ export default function Thread(props: InferGetServerSidePropsType<typeof getServ
                     })
                   }}
                 ></Text>
+                {message.attachments.map((attachment) => (
+                  <Text key={attachment.id}>
+                    <a
+                      href={`${props.remoteStorageUrl}/download-file/${Buffer.from(
+                        attachment.file
+                      ).toString('base64')}`}
+                    >
+                      {JSON.parse(attachment.file)[6]}
+                    </a>
+                  </Text>
+                ))}
               </Card.Section>
               <Card.Section inheritPadding pt={5}>
                 <Text align="right" c="dimmed">
@@ -79,6 +89,7 @@ export const getServerSideProps = withAuthAndDB<{
   id: string;
   messages: { createdAt: string; messages: (models.Message & { me: boolean })[] }[];
   subscription: models.Subscription;
+  remoteStorageUrl: string;
 }>(async function getServerSideProps({ query, user }) {
   if (query.id === undefined || typeof query.id !== 'string') {
     return {
@@ -95,12 +106,15 @@ export const getServerSideProps = withAuthAndDB<{
     get('messenger:get-subscriptions'),
     get('messenger:get-messages-by-subscription', {
       subscriptionId: query.id
-    })
+    }),
+    get('messenger:get-remote-storage-url')
   ] as const);
 
   const subscriptions = response.results[0];
 
   const messagesBySubscription = response.results[1];
+
+  const remoteStorageUrl = response.results[2];
 
   if (messagesBySubscription === undefined) {
     return {
@@ -138,7 +152,8 @@ export const getServerSideProps = withAuthAndDB<{
     props: {
       id: query.id,
       messages: groupMessagesByCreatedAtDaily,
-      subscription: subscription
+      subscription: subscription,
+      remoteStorageUrl: remoteStorageUrl
     }
   };
 });
