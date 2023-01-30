@@ -74,6 +74,10 @@ export interface Results {
     parameters: MessagesRequest;
     response: Messages | undefined;
   };
+  'messenger:get-remote-storage-url': {
+    parameters: undefined;
+    response: string;
+  };
   'classbook:get-statistics+time': {
     parameters: StatisticsRequest<'time'>;
     response: StatisticByTime;
