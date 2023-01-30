@@ -1,6 +1,6 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Avatar, createStyles, Group, Menu, Text, UnstyledButton } from '@mantine/core';
-import { IconLogout, IconSchool, IconSettings, IconUser } from '@tabler/icons';
+import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -66,9 +66,6 @@ export default function Account() {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Label>Informationen</Menu.Label>
-        <Menu.Item icon={<IconSchool size={16} />}>Schule</Menu.Item>
-
         <Menu.Label>Einstellungen</Menu.Label>
         <Menu.Item
           onClick={() => router.push('/settings')}
