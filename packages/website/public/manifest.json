@@ -37,7 +37,37 @@
       "name": "Stundenplan",
       "short_name": "Stundenplan",
       "description": "Schau den Stundenplan an",
-      "url": "/timetable"
+      "url": "/timetable",
+      "icons": [
+        {
+          "src": "/images/timetable_maskable_192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "/images/timetable_maskable_512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Nachrichten",
+      "short_name": "Nachrichten",
+      "description": "Lese dir die Nachrichten durch",
+      "url": "/messages",
+      "icons": [
+        {
+          "src": "/images/messages_maskable_192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "/images/messages_maskable_512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
