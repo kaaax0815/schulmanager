@@ -40,16 +40,9 @@
       "url": "/timetable",
       "icons": [
         {
-          "src": "/images/timetable_maskable_192.png",
+          "src": "/images/shortcut_timetable_192.png",
           "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "maskable"
-        },
-        {
-          "src": "/images/timetable_maskable_512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "maskable"
+          "type": "image/png"
         }
       ]
     },
@@ -60,16 +53,9 @@
       "url": "/messages",
       "icons": [
         {
-          "src": "/images/messages_maskable_192.png",
+          "src": "/images/shortcut_messages_192.png",
           "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "maskable"
-        },
-        {
-          "src": "/images/messages_maskable_512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "maskable"
+          "type": "image/png"
         }
       ]
     }
