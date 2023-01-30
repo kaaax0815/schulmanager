@@ -1,5 +1,9 @@
 import { Container, ContainerProps, createStyles, ScrollArea } from '@mantine/core';
 import { IconClock, IconHome } from '@tabler/icons';
+import { useRouter } from 'next/router';
+import { useRef } from 'react';
+
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 
 import Header from './header';
 
@@ -23,6 +27,11 @@ const useStyles = createStyles((theme) => ({
 
 export default function Layout({ children, ...rest }: LayoutProps) {
   const { classes } = useStyles();
+
+  const router = useRouter();
+  const scrollArea = useRef<HTMLDivElement>(null);
+  useScrollRestoration(router, scrollArea);
+
   return (
     <>
       <Header
@@ -38,6 +47,7 @@ export default function Layout({ children, ...rest }: LayoutProps) {
           classNames={{
             root: classes.scrollArea
           }}
+          viewportRef={scrollArea}
         >
           <Container {...rest} className={classes.container}>
             {children}

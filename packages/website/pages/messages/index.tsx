@@ -1,9 +1,7 @@
 import { Anchor, Button, Card, Center, createStyles, Group, Text, ThemeIcon } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import { IconUser, IconUsers } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { batchRequest, get, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
@@ -26,21 +24,6 @@ const useStyles = createStyles((theme) => ({
 
 export default function Messages(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { classes } = useStyles();
-
-  const [lastViewedSubscription, setLastViewedSubscription] = useLocalStorage<string | undefined>({
-    key: 'lastViewedSubscription',
-    defaultValue: undefined
-  });
-
-  useEffect(() => {
-    if (lastViewedSubscription) {
-      const element = document.getElementById(lastViewedSubscription);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-      setLastViewedSubscription(undefined);
-    }
-  }, [lastViewedSubscription, setLastViewedSubscription]);
 
   return (
     <Layout pb="xs">

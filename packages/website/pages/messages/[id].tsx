@@ -1,8 +1,7 @@
 import { Badge, Card, Center, Text } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
 import linkifyStr from 'linkify-string';
 import { InferGetServerSidePropsType } from 'next';
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { batchRequest, get, getLoginStatus, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
@@ -12,25 +11,17 @@ import { withAuthAndDB } from '@/utils/guard';
 export default function Thread(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const [, setLastViewedSubscription] = useLocalStorage<string | undefined>({
-    key: 'lastViewedSubscription',
-    defaultValue: undefined
-  });
-
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomRef.current?.scrollIntoView();
   }, []);
 
-  useEffect(() => {
-    setLastViewedSubscription(props.subscription.id);
-  }, [props.subscription.id, setLastViewedSubscription]);
   return (
     <Layout pb="xs">
       <Text weight={500} size="lg" align="center" mt="xs">
         {props.subscription.thread.subject}
       </Text>
       {props.messages.map((group) => (
-        <>
+        <Fragment key={group.createdAt}>
           <Center>
             <Badge mt="xs">{group.createdAt}</Badge>
           </Center>
@@ -78,7 +69,7 @@ export default function Thread(props: InferGetServerSidePropsType<typeof getServ
               </Card.Section>
             </Card>
           ))}
-        </>
+        </Fragment>
       ))}
       <div ref={bottomRef}></div>
     </Layout>
