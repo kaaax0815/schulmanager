@@ -135,3 +135,21 @@ export function getWeekNumber(date: Date) {
     )
   );
 }
+
+/**
+ * @param date The date to get the next working day of
+ * @description This does not mutate the date object
+ * @returns The next working day
+ */
+export function getNextWorkingDay(date: Date) {
+  const copiedDate = new Date(date);
+  const day = copiedDate.getDay();
+  copiedDate.setDate(copiedDate.getDate() + 1);
+  if (day === 5) {
+    copiedDate.setDate(copiedDate.getDate() + 2);
+  }
+  if (day === 6) {
+    copiedDate.setDate(copiedDate.getDate() + 1);
+  }
+  return copiedDate;
+}

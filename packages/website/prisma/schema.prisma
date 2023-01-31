@@ -21,4 +21,5 @@ model Settings {
   lettersEnabled Boolean @default(true)
   eventsEnabled  Boolean @default(true)
   examsEnabled   Boolean @default(true)
+  nextLessonEnabled Boolean @default(true)
 }

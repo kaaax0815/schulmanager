@@ -20,7 +20,8 @@ export default function SettingsPage(
     initialValues: {
       lettersEnabled: props.lettersEnabled,
       eventsEnabled: props.eventsEnabled,
-      examsEnabled: props.examsEnabled
+      examsEnabled: props.examsEnabled,
+      nextLessonEnabled: props.nextLessonEnabled
     }
   });
 
@@ -79,6 +80,10 @@ export default function SettingsPage(
         Wähle die Module aus, die du in deinem Dashboard angezeigt bekommen möchtest.
       </Text>
       <form onSubmit={submit}>
+        <Switch
+          label="Nächste Stunde"
+          {...form.getInputProps('nextLessonEnabled', { type: 'checkbox' })}
+        />
         <Switch
           label="Elternbriefe"
           {...form.getInputProps('lettersEnabled', { type: 'checkbox' })}
