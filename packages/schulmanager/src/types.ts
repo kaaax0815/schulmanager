@@ -12,6 +12,8 @@ import {
   MessagesRequest,
   Notification,
   NotificationsRequest,
+  ScheduleClassHourRequest,
+  ScheduleClassHourResponse,
   Settings,
   StatisticBySubject,
   StatisticByTime,
@@ -57,6 +59,10 @@ export interface Results {
   'schedules:get-actual-lessons': {
     parameters: LessonRequest;
     response: Lesson[];
+  };
+  'schedules:poqa+classhour': {
+    parameters: ScheduleClassHourRequest;
+    response: ScheduleClassHourResponse;
   };
   'letters:get-letters': {
     parameters: undefined;
