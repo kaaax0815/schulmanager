@@ -15,11 +15,15 @@ model User {
 }
 
 model Settings {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  user           User    @relation(fields: [userId], references: [id])
-  userId         String  @unique @db.ObjectId
-  lettersEnabled Boolean @default(true)
-  eventsEnabled  Boolean @default(true)
-  examsEnabled   Boolean @default(true)
-  nextLessonEnabled Boolean @default(true)
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  user               User    @relation(fields: [userId], references: [id])
+  userId             String  @unique @db.ObjectId
+  nextLessonEnabled  Boolean @default(true)
+  nextLessonPosition Int     @default(0)
+  lettersEnabled     Boolean @default(true)
+  lettersPosition    Int     @default(1)
+  eventsEnabled      Boolean @default(true)
+  eventsPosition     Int     @default(2)
+  examsEnabled       Boolean @default(true)
+  examsPosition      Int     @default(3)
 }

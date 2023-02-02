@@ -1,5 +1,5 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { Button, Divider, Switch, Text } from '@mantine/core';
+import { Button, Divider, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification, updateNotification } from '@mantine/notifications';
 import { Settings } from '@prisma/client';
@@ -7,8 +7,22 @@ import { IconCheck, IconX } from '@tabler/icons';
 import { InferGetServerSidePropsType } from 'next';
 
 import Layout from '@/components/layout';
+import DragNDrop from '@/components/settings/dragndrop';
 import useRouterRefresh from '@/hooks/useRouterRefresh';
 import { withAuthAndDB } from '@/utils/guard';
+
+type SortProp = {
+  position: string;
+};
+function customSort(values: Record<string, unknown>, a: SortProp, b: SortProp) {
+  const aValue = values[a.position];
+  const bValue = values[b.position];
+
+  if (typeof aValue !== 'number' || typeof bValue !== 'number') {
+    return 0;
+  }
+  return aValue - bValue;
+}
 
 export default function SettingsPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
@@ -18,10 +32,14 @@ export default function SettingsPage(
 
   const form = useForm({
     initialValues: {
+      nextLessonEnabled: props.nextLessonEnabled,
+      nextLessonPosition: props.nextLessonPosition,
       lettersEnabled: props.lettersEnabled,
+      lettersPosition: props.lettersPosition,
       eventsEnabled: props.eventsEnabled,
+      eventsPosition: props.eventsPosition,
       examsEnabled: props.examsEnabled,
-      nextLessonEnabled: props.nextLessonEnabled
+      examsPosition: props.examsPosition
     }
   });
 
@@ -77,19 +95,36 @@ export default function SettingsPage(
     <Layout>
       <Divider mt="xs" mb={0} label="Module" labelPosition="center" />
       <Text size="sm" color="dimmed" align="center" mb="xs">
-        Wähle die Module aus, die du in deinem Dashboard angezeigt bekommen möchtest.
+        Wähle die Module aus, die du in deinem Dashboard angezeigt haben möchtest und in welcher
+        Reihenfolge.
       </Text>
       <form onSubmit={submit}>
-        <Switch
-          label="Nächste Stunde"
-          {...form.getInputProps('nextLessonEnabled', { type: 'checkbox' })}
+        <DragNDrop
+          settings={[
+            {
+              id: 'nextLessonEnabled',
+              name: 'Nächste Stunde',
+              position: 'nextLessonPosition'
+            },
+            {
+              id: 'eventsEnabled',
+              name: 'Termine',
+              position: 'eventsPosition'
+            },
+            {
+              id: 'examsEnabled',
+              name: 'Klausuren',
+              position: 'examsPosition'
+            },
+            {
+              id: 'lettersEnabled',
+              name: 'Elternbriefe',
+              position: 'lettersPosition'
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ].sort((a, b) => customSort(form.values, a, b))}
+          form={form}
         />
-        <Switch
-          label="Elternbriefe"
-          {...form.getInputProps('lettersEnabled', { type: 'checkbox' })}
-        />
-        <Switch label="Termine" {...form.getInputProps('eventsEnabled', { type: 'checkbox' })} />
-        <Switch label="Klausuren" {...form.getInputProps('examsEnabled', { type: 'checkbox' })} />
         <Divider mt="xs" mb={0} label="Speichern" labelPosition="center" />
         <Text size="sm" color="dimmed" align="center" mb="xs">
           Vergiss nicht, die Änderungen zu speichern.

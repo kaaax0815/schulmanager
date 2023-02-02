@@ -5,9 +5,14 @@ export const UpdateSchema = z.object({
   jwt: z.string().optional(),
   settings: z
     .object({
+      nextLessonEnabled: z.boolean(),
+      nextLessonPosition: z.number(),
       lettersEnabled: z.boolean(),
+      lettersPosition: z.number(),
       eventsEnabled: z.boolean(),
-      examsEnabled: z.boolean()
+      eventsPosition: z.number(),
+      examsEnabled: z.boolean(),
+      examsPosition: z.number()
     })
     .optional()
 });

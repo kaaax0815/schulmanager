@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { EventsProps } from './events';
 import { ExamsProps } from './exams';
 import { LettersProps } from './letters';
+import { NextLessonProps } from './nextLesson';
 
-export interface DisabledProps extends EventsProps, ExamsProps, LettersProps {}
+export type DisabledProps = EventsProps & ExamsProps & LettersProps & NextLessonProps;
 
 export default function Disabled(props: DisabledProps) {
   let disabled = 0;

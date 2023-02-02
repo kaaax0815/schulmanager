@@ -1,4 +1,6 @@
+import { Settings } from '@prisma/client';
 import { InferGetServerSidePropsType } from 'next';
+import { useMemo } from 'react';
 import { batchRequest, get, getLoginStatus, InvalidStatusCode, models } from 'schulmanager';
 
 import Layout from '@/components/layout';
@@ -13,15 +15,34 @@ import { withAuthAndDB } from '@/utils/guard';
 
 export default function Overview(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   useIcons(props.iconsData);
+
+  const components = useMemo(() => {
+    return [
+      {
+        i: props.settings.nextLessonPosition,
+        v: <NextLesson nextLesson={props.nextLesson} />
+      },
+      {
+        i: props.settings.lettersPosition,
+        v: <Letters unreadLetters={props.unreadLetters} />
+      },
+      {
+        i: props.settings.eventsPosition,
+        v: <Events upcomingEvents={props.upcomingEvents} />
+      },
+      {
+        i: props.settings.examsPosition,
+        v: <Exams upcomingExams={props.upcomingExams} />
+      }
+    ].sort((a, b) => a.i - b.i);
+  }, [props]);
   return (
     <Layout pb="md">
-      <NextLesson nextLesson={props.nextLesson} />
-      <Letters unreadLetters={props.unreadLetters} />
-      <Events upcomingEvents={props.upcomingEvents} />
-      <Exams upcomingExams={props.upcomingExams} />
+      {components.map((component) => component.v)}
       <Disabled
-        upcomingEvents={props.upcomingEvents}
+        nextLesson={props.nextLesson}
         unreadLetters={props.unreadLetters}
+        upcomingEvents={props.upcomingEvents}
         upcomingExams={props.upcomingExams}
       />
     </Layout>
@@ -34,6 +55,7 @@ export const getServerSideProps = withAuthAndDB<{
   upcomingExams: models.Exam[] | null;
   iconsData: UseIconsProps;
   nextLesson: models.Lesson | null;
+  settings: Settings;
 }>(async function getServerSideProps({ user, iconsData }) {
   try {
     const collator = new Intl.Collator();
@@ -182,7 +204,8 @@ export const getServerSideProps = withAuthAndDB<{
         upcomingEvents: eventsToReturn,
         upcomingExams: examsToReturn,
         iconsData: iconsData,
-        nextLesson: nextLessonToReturn
+        nextLesson: nextLessonToReturn,
+        settings: user.settings
       }
     };
   } catch (e) {
