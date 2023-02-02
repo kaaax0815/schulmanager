@@ -1,4 +1,4 @@
-import { Anchor, Button, Card, Group, Text } from '@mantine/core';
+import { Anchor, Button, Card, Flex, Group, Text } from '@mantine/core';
 import { IconCalendar } from '@tabler/icons';
 import { Fragment } from 'react';
 import { models } from 'schulmanager';
@@ -29,14 +29,16 @@ export default function Events(props: EventsProps) {
               <Text fw={700}>{formatApiToHuman(event.start)}</Text>
             </Card.Section>
             <Card.Section inheritPadding>
-              {event.events.map((event) => (
-                <Anchor
-                  key={event.id}
-                  href={`https://login.schulmanager-online.de/#/modules/calendar/overview/view-event/${event.id}`}
-                >
-                  {event.summary}
-                </Anchor>
-              ))}
+              <Flex direction="column">
+                {event.events.map((event) => (
+                  <Anchor
+                    key={event.id}
+                    href={`https://login.schulmanager-online.de/#/modules/calendar/overview/view-event/${event.id}`}
+                  >
+                    {event.summary}
+                  </Anchor>
+                ))}
+              </Flex>
             </Card.Section>
           </Fragment>
         ))}
