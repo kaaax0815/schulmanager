@@ -5,7 +5,7 @@ import { models } from 'schulmanager';
 
 import { formatApiToHuman } from '@/utils/date';
 
-interface NextLessonProps {
+export interface NextLessonProps {
   nextLesson: models.Lesson | null;
 }
 
@@ -20,7 +20,8 @@ export default function NextLesson(props: NextLessonProps) {
       teacher:
         props.nextLesson.actualLesson.teachers[0].lastname +
         ', ' +
-        props.nextLesson.actualLesson.teachers[0].firstname
+        props.nextLesson.actualLesson.teachers[0].firstname,
+      comment: props.nextLesson.actualLesson.comment
     };
   }, [props.nextLesson]);
 
@@ -56,6 +57,7 @@ export default function NextLesson(props: NextLessonProps) {
                 <Text>{nextInfo?.room}</Text>
               </Group>
               <Text>{nextInfo?.teacher}</Text>
+              <Text>{nextInfo?.comment}</Text>
             </>
           )}
         </Flex>
