@@ -1,6 +1,7 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { Avatar, createStyles, Group, Menu, Text, UnstyledButton } from '@mantine/core';
 import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -67,22 +68,26 @@ export default function Account() {
       </Menu.Target>
       <Menu.Dropdown>
         <Menu.Label>Einstellungen</Menu.Label>
-        <Menu.Item
-          onClick={() => router.push('/settings')}
-          className={classes.item}
-          data-active={router.pathname === '/settings'}
-          icon={<IconSettings size={16} />}
-        >
-          Einstellungen
-        </Menu.Item>
-        <Menu.Item
-          onClick={() => router.push('/account')}
-          className={classes.item}
-          data-active={router.pathname === '/account'}
-          icon={<IconUser size={16} />}
-        >
-          Account
-        </Menu.Item>
+        <Link href="/settings" legacyBehavior passHref>
+          <Menu.Item
+            className={classes.item}
+            data-active={router.pathname === '/settings'}
+            icon={<IconSettings size={16} />}
+            component="a"
+          >
+            Einstellungen
+          </Menu.Item>
+        </Link>
+        <Link href="/account" legacyBehavior passHref>
+          <Menu.Item
+            className={classes.item}
+            data-active={router.pathname === '/account'}
+            icon={<IconUser size={16} />}
+            component="a"
+          >
+            Account
+          </Menu.Item>
+        </Link>
         <Menu.Item
           onClick={() => router.push('/api/auth/logout')}
           className={classes.item}

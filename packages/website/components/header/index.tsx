@@ -60,15 +60,6 @@ export default function Header({ tabs }: Header) {
   const { classes, cx } = useStyles();
   const router = useRouter();
 
-  const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab.name} key={tab.name} onClick={() => router.push(tab.url)}>
-      <Group>
-        <tab.icon size={20} />
-        <Text>{tab.name}</Text>
-      </Group>
-    </Tabs.Tab>
-  ));
-
   return (
     <nav className={classes.header}>
       <Container pb="xs">
@@ -110,7 +101,16 @@ export default function Header({ tabs }: Header) {
           }}
           value={tabs.find((tab) => tab.url === router.pathname)?.name}
         >
-          <Tabs.List grow>{items}</Tabs.List>
+          <Tabs.List grow>
+            {tabs.map((tab) => (
+              <Tabs.Tab value={tab.name} key={tab.name} onClick={() => router.push(tab.url)}>
+                <Group>
+                  <tab.icon size={20} />
+                  <Text>{tab.name}</Text>
+                </Group>
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
         </Tabs>
       </Container>
     </nav>
