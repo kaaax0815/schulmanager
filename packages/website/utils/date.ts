@@ -153,3 +153,36 @@ export function getNextWorkingDay(date: Date) {
   }
   return copiedDate;
 }
+
+// Credits: https://stackoverflow.com/a/15289883/13707908
+export function dateDiffInDays(a: Date, b: Date) {
+  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+  // Discard the time and time-zone information.
+  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}
+
+/**
+ * @param date The date to format
+ * @returns If today: "HH:MM", if yesterday: "Gestern", if this week: "dddd", else: "dd.mm.yy"
+ */
+export function formatTimestamp(date: Date) {
+  const today = new Date();
+  const yesterday = dateInTime({ days: -1 });
+
+  if (date.toDateString() === today.toDateString()) {
+    return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  if (date.toDateString() === yesterday.toDateString()) {
+    return 'Gestern';
+  }
+
+  if (dateDiffInDays(date, today) <= 7) {
+    return date.toLocaleDateString('de-DE', { weekday: 'long' });
+  }
+
+  return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' });
+}

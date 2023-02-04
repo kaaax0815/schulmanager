@@ -22,6 +22,11 @@ const useStyles = createStyles((theme) => ({
     [theme.fn.smallerThan('sm')]: {
       maxWidth: '100vw'
     }
+  },
+  noScrollContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
   }
 }));
 
@@ -53,6 +58,30 @@ export default function Layout({ children, ...rest }: LayoutProps) {
             {children}
           </Container>
         </ScrollArea.Autosize>
+      </main>
+    </>
+  );
+}
+
+export function LayoutWithoutScrollbars({ children, ...rest }: LayoutProps) {
+  const { classes } = useStyles();
+
+  const router = useRouter();
+  const scrollArea = useRef<HTMLDivElement>(null);
+  useScrollRestoration(router, scrollArea);
+
+  return (
+    <>
+      <Header
+        tabs={[
+          { name: 'Übersicht', url: '/', icon: IconHome },
+          { name: 'Stundenplan', url: '/timetable', icon: IconClock }
+        ]}
+      />
+      <main className={classes.scrollArea}>
+        <Container {...rest} className={`${classes.container} ${classes.noScrollContainer}`}>
+          {children}
+        </Container>
       </main>
     </>
   );

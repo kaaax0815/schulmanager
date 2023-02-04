@@ -20,19 +20,19 @@ export default function Overview(props: InferGetServerSidePropsType<typeof getSe
     return [
       {
         i: props.settings.nextLessonPosition,
-        v: <NextLesson nextLesson={props.nextLesson} />
+        v: <NextLesson nextLesson={props.nextLesson} key={props.settings.nextLessonPosition} />
       },
       {
         i: props.settings.lettersPosition,
-        v: <Letters unreadLetters={props.unreadLetters} />
+        v: <Letters unreadLetters={props.unreadLetters} key={props.settings.lettersPosition} />
       },
       {
         i: props.settings.eventsPosition,
-        v: <Events upcomingEvents={props.upcomingEvents} />
+        v: <Events upcomingEvents={props.upcomingEvents} key={props.settings.eventsPosition} />
       },
       {
         i: props.settings.examsPosition,
-        v: <Exams upcomingExams={props.upcomingExams} />
+        v: <Exams upcomingExams={props.upcomingExams} key={props.settings.examsPosition} />
       }
     ].sort((a, b) => a.i - b.i);
   }, [props]);
