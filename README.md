@@ -1,3 +1,5 @@
+Not maintained anymore. Use [schulmanager-online](https://login.schulmanager-online.de) instead. Website would need a complete rewrite to be useful.
+
 # Schulmanager
 
 ## Alternative client for schulmanager-online.de
