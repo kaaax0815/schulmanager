@@ -14,6 +14,7 @@ import {
   NotificationsRequest,
   ScheduleClassHourRequest,
   ScheduleClassHourResponse,
+  SetNotificationReadRequest,
   Settings,
   StatisticBySubject,
   StatisticByTime,
@@ -51,6 +52,10 @@ export interface Results {
   'null:get-notifications': {
     parameters: NotificationsRequest;
     response: Notification[];
+  };
+  'null:set-notification-read': {
+    parameters: SetNotificationReadRequest;
+    response: null;
   };
   'exams:get-exams': {
     parameters: ExamRequest;

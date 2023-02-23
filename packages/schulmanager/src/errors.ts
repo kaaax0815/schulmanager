@@ -14,13 +14,6 @@ export class MissingNewToken extends Error {
   }
 }
 
-export class InvalidResponse extends Error {
-  constructor(received: any) {
-    super(`The Server send an invalid response!\nReceived: ${received}\nExpected: not null`);
-    this.name = 'InvalidResponse';
-  }
-}
-
 export class NotAuthenticated extends Error {
   constructor(received: any) {
     super(`You are not authenticated!\nReceived: ${received}\nExpected: true`);
