@@ -4,5 +4,6 @@
   "out": "docs",
   "entryPointStrategy": "resolve",
   "name": "Schulmanager",
-  "includeVersion": true
+  "includeVersion": true,
+  "includes": "./doc"
 }

@@ -12,3 +12,4 @@ export * from './term';
 export * from './notifications';
 export * from './messages';
 export * from './poqa';
+export * from './websocket';

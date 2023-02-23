@@ -32,6 +32,8 @@ const response = await batchRequest(token, [
 
 Documentation is available at [kc-schulmanager-docs.netlify.app](https://kc-schulmanager-docs.netlify.app/)
 
+Documentation for WebSocket is available at [types/models.WebSocket](https://kc-schulmanager-docs.netlify.app/types/models.WebSocket)
+
 ## ⚠️ Disclaimer
 
 This library is not affiliated with schulmanager-online.de in any way. It is not supported by schulmanager-online.de and you use it at your own risk.

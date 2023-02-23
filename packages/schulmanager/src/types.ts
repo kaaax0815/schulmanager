@@ -28,6 +28,10 @@ import {
  * "+" is used to separate multiple Requests with same Id but different Parameters and Response
  */
 export interface Results {
+  'null:get-websocket-push-url': {
+    parameters: undefined;
+    response: string;
+  };
   'null:get-settings': {
     parameters: undefined;
     response: Settings;
@@ -93,6 +97,7 @@ export interface Results {
     response: StatisticBySubject[];
   };
 }
+
 export interface IBatchRequest<Id extends keyof Results = keyof Results> {
   id: Id;
   moduleName: ReturnType<typeof getResults>['moduleName'];
