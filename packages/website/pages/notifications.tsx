@@ -15,6 +15,7 @@ const useStyles = createStyles(() => ({
   }
 }));
 
+// TODO: implement mark as read
 export default function Notifications(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
@@ -27,7 +28,7 @@ export default function Notifications(
           href={parseNotificationLink(notification)}
           className={classes.link}
         >
-          <Card shadow="sm" mt="xs">
+          <Card shadow="sm" mt="xs" bg={notification.read ? undefined : 'blue'}>
             <Card.Section withBorder inheritPadding py={5}>
               <Group>
                 <IconClockHour9 size={18} />
